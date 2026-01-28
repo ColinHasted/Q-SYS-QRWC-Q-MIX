@@ -1,0 +1,159 @@
+<div class="mixer">
+  <!-- Top Section - Channel Strip Processing -->
+  <div class="mixer__top">
+    <div class="channel-strip">
+      <!-- IN Section -->
+      <app-mixer-input
+        [gain]="channelStrip().gain"
+        [invert]="channelStrip().invert"
+        [phantom]="channelStrip().phantom"
+        [hpfOn]="channelStrip().hpfOn"
+        [hpfFrequency]="channelStrip().hpfFrequency"
+        [vuLevel]="getSelectedChannelVU()"
+        [clip]="getSelectedChannelClip()"
+        [selectedChannel]="selectedChannel()"
+        (gainChange)="updateStripValue('gain', $event)"
+        (invertToggle)="toggleStripProp('invert')"
+        (phantomToggle)="toggleStripProp('phantom')"
+        (hpfToggle)="toggleStripProp('hpfOn')"
+        (hpfFrequencyChange)="updateStripValue('hpfFrequency', $event)"
+      />
+
+      <!-- GATE Section -->
+      <app-mixer-gate
+        [on]="channelStrip().gateOn"
+        [threshold]="channelStrip().gateThreshold"
+        [attack]="channelStrip().gateAttack"
+        [release]="channelStrip().gateRelease"
+        [range]="channelStrip().gateRange"
+        (toggle)="toggleStripProp('gateOn')"
+        (thresholdChange)="updateStripValue('gateThreshold', $event)"
+        (attackChange)="updateStripValue('gateAttack', $event)"
+        (releaseChange)="updateStripValue('gateRelease', $event)"
+        (rangeChange)="updateStripValue('gateRange', $event)"
+      />
+
+      <!-- COMP Section -->
+      <app-mixer-compressor
+        [on]="channelStrip().compOn"
+        [threshold]="channelStrip().compThreshold"
+        [ratio]="channelStrip().compRatio"
+        [attack]="channelStrip().compAttack"
+        [release]="channelStrip().compRelease"
+        [makeup]="channelStrip().compMakeup"
+        (toggle)="toggleStripProp('compOn')"
+        (thresholdChange)="updateStripValue('compThreshold', $event)"
+        (ratioChange)="updateStripValue('compRatio', $event)"
+        (attackChange)="updateStripValue('compAttack', $event)"
+        (releaseChange)="updateStripValue('compRelease', $event)"
+        (makeupChange)="updateStripValue('compMakeup', $event)"
+      />
+
+      <!-- EQUALISER Section -->
+      <app-mixer-equalizer
+        [on]="channelStrip().eqOn"
+        [bands]="channelStrip().eqBands"
+        (toggle)="toggleStripProp('eqOn')"
+        (bandChange)="updateEQBand($event.index, $event.property, $event.value)"
+      />
+
+      <!-- OUT Section -->
+      <app-mixer-output
+        [delayOn]="channelStrip().delayOn"
+        [delayMs]="channelStrip().delayMs"
+        [limiterOn]="channelStrip().limiterOn"
+        [limiterThreshold]="channelStrip().limiterThreshold"
+        (delayToggle)="toggleStripProp('delayOn')"
+        (delayChange)="updateStripValue('delayMs', $event)"
+        (limiterToggle)="toggleStripProp('limiterOn')"
+        (limiterThresholdChange)="updateStripValue('limiterThreshold', $event)"
+      />
+
+      <!-- AUX SENDS Section -->
+      <app-mixer-aux-sends
+        [auxSends]="channelStrip().auxSends"
+        (auxSendChange)="updateAuxSend($event.index, $event.value)"
+      />
+    </div>
+  </div>
+
+  <!-- Bottom Section - Fader Bank -->
+  <div class="mixer__bottom">
+    <div class="fader-bank">
+      @for (channel of channels(); track channel.id) {
+        <app-mixer-channel
+          [channel]="channel"
+          (faderChange)="updateFader(channel.id, $event)"
+          (panChange)="updateChannelPan(channel.id, $event)"
+          (onToggle)="toggleChannelProp(channel.id, 'on')"
+          (soloToggle)="toggleChannelProp(channel.id, 'solo')"
+          (cueToggle)="toggleChannelProp(channel.id, 'cue')"
+          (select)="selectChannel(channel.id)"
+        />
+      }
+
+      <!-- Master Fader Section -->
+      <div class="master-section">
+        <div class="channel master">
+          <div class="channel-label master-label">MASTER</div>
+
+          <!-- Master VU Meters (Stereo) -->
+          <div class="vu-meter-stereo">
+            <div class="vu-meter master-vu stereo-channel">
+              @for (seg of getVUSegments(master().vuLevelL); track $index) {
+                <div class="vu-segment"
+                     [class.active]="seg"
+                     [class.yellow]="$index >= 8 && $index < 10"
+                     [class.red]="$index >= 10"></div>
+              }
+              <div class="clip-led" [class.active]="master().clipL">L</div>
+            </div>
+            <div class="vu-meter master-vu stereo-channel">
+              @for (seg of getVUSegments(master().vuLevelR); track $index) {
+                <div class="vu-segment"
+                     [class.active]="seg"
+                     [class.yellow]="$index >= 8 && $index < 10"
+                     [class.red]="$index >= 10"></div>
+              }
+              <div class="clip-led" [class.active]="master().clipR">R</div>
+            </div>
+          </div>
+
+
+
+          <!-- Master Buttons -->
+          <div class="channel-buttons">
+            <button class="ch-btn mute" [class.active]="master().mute"
+                    (click)="toggleMasterMute()">MUTE</button>
+            <button class="ch-btn select" [class.active]="master().select"
+                    (click)="toggleMasterSelect()">SEL</button>
+          </div>
+
+          <!-- Master Fader -->
+          <div class="fader-track master-track">
+            <input type="range" class="fader master-fader" min="0" max="100"
+                   [value]="master().faderValue"
+                   (input)="updateMasterFader(+$any($event.target).value)"
+                   orient="vertical">
+            <div class="fader-scale">
+              <span>+10</span>
+              <span>0</span>
+              <span>-10</span>
+              <span>-20</span>
+              <span>-∞</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Branding -->
+  <div class="branding">
+    <span class="brand-logo">
+      <img src="q-sys-emblem-white.svg" alt="Q-SYS" class="brand-emblem" />
+      <span>-MIX</span>
+    </span>
+    <span class="brand-sub">SURFACE</span>
+  </div>
+</div>
