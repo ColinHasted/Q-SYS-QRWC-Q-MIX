@@ -1,0 +1,55 @@
+<div class="strip-panel in-panel">
+  <div class="panel-header">IN</div>
+  <div class="panel-content">
+    <div class="input-main">
+      <div class="input-vu">
+        @for (seg of getVUSegments(); track $index) {
+          <div class="input-vu-segment"
+               [class.active]="seg"
+               [class.yellow]="$index >= 8 && $index < 10"
+               [class.red]="$index >= 10"></div>
+        }
+        <div class="clip-led" [class.active]="clip()">CLIP</div>
+      </div>
+      <div class="input-knob-section">
+        <div class="knob-group">
+          <div class="knob-wrapper">
+            <app-rotary-knob
+              [value]="gain()"
+              [min]="-20"
+              [max]="60"
+              [step]="1"
+              (valueChange)="onGainChange($event)"
+            />
+          </div>
+          <label>GAIN</label>
+        </div>
+        <div class="value-display">{{ gain() }}dB</div>
+      </div>
+    </div>
+
+    <div class="button-row">
+      <button class="panel-btn" [class.active]="invert()"
+              (click)="onInvertToggle()">Ø</button>
+      <button class="panel-btn phantom" [class.active]="phantom()"
+              (click)="onPhantomToggle()">48V</button>
+    </div>
+
+    <div class="hpf-section">
+      <button class="panel-btn" [class.active]="hpfOn()"
+              (click)="onHpfToggle()">HPF</button>
+      <div class="knob-wrapper small">
+        <app-rotary-knob
+          [value]="hpfFrequency()"
+          [min]="20"
+          [max]="400"
+          [step]="5"
+          size="small"
+          (valueChange)="onHpfFrequencyChange($event)"
+        />
+      </div>
+      <span class="hpf-freq">{{ hpfFrequency() }}Hz</span>
+    </div>
+
+  </div>
+</div>

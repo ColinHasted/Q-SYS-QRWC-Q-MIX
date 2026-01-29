@@ -1,0 +1,41 @@
+:host {
+  display: contents;
+}
+
+// Vertical column layout for output section
+.out-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375em;
+  flex: 1;
+  
+  .knob-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25em;
+    
+    label {
+      font-size: 0.5em;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+  }
+  
+  .value-display {
+    font-size: 0.5625em;
+    color: #0cf;
+    font-family: 'Consolas', monospace;
+    text-align: center;
+    padding: 0.25em 0.5em;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 0.25em;
+    min-width: 4em;
+  }
+  
+  .panel-btn {
+    width: 100%;
+    max-width: 4em;
+  }
+}

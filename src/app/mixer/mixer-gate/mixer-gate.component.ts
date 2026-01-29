@@ -1,74 +1,12 @@
 import { Component, input, output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { RotaryKnobComponent } from '../shared/rotary-knob/rotary-knob.component';
 
 @Component({
   selector: 'app-mixer-gate',
   standalone: true,
-  imports: [FormsModule, RotaryKnobComponent],
-  styles: [`:host { display: contents; }`],
-  template: `
-    <div class="strip-panel gate-panel">
-      <div class="panel-header">GATE</div>
-      <div class="panel-content">
-        <div class="knob-row">
-          <div class="knob-group">
-            <div class="knob-wrapper">
-              <app-rotary-knob
-                [value]="attack()"
-                [min]="0.1"
-                [max]="10"
-                [step]="0.1"
-                (valueChange)="onAttackChange($event)"
-              />
-            </div>
-            <label>ATTACK</label>
-          </div>
-          <div class="knob-group">
-            <div class="knob-wrapper">
-              <app-rotary-knob
-                [value]="release()"
-                [min]="10"
-                [max]="1000"
-                [step]="1"
-                (valueChange)="onReleaseChange($event)"
-              />
-            </div>
-            <label>RELEASE</label>
-          </div>
-          <div class="knob-group">
-            <div class="knob-wrapper">
-              <app-rotary-knob
-                [value]="range()"
-                [min]="-80"
-                [max]="0"
-                [step]="1"
-                (valueChange)="onRangeChange($event)"
-              />
-            </div>
-            <label>DEPTH</label>
-          </div>
-        </div>
-        <div class="knob-row">
-          <div class="knob-group threshold-knob">
-            <div class="knob-wrapper large">
-              <app-rotary-knob
-                [value]="threshold()"
-                [min]="-80"
-                [max]="0"
-                [step]="1"
-                size="large"
-                (valueChange)="onThresholdChange($event)"
-              />
-            </div>
-            <label>THRESHOLD</label>
-          </div>
-        </div>
-        <button class="panel-toggle" [class.active]="on()"
-                (click)="onToggle()">GATE</button>
-      </div>
-    </div>
-  `
+  imports: [ RotaryKnobComponent],
+  templateUrl: './mixer-gate.component.html',
+  styleUrls: ['./mixer-gate.component.scss']
 })
 export class MixerGateComponent {
   on = input.required<boolean>();

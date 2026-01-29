@@ -1,0 +1,15 @@
+<div class="knob-container" 
+     [class.large]="size() === 'large'"
+     [class.small]="size() === 'small'"
+     [style.width]="sizeEm"
+     [style.height]="sizeEm"
+     #knobElement
+     (mousedown)="onMouseDown($event)"
+     (touchstart)="onTouchStart($event)">
+  <div class="knob-ring"></div>
+  <div class="knob-body">
+    <div class="knob-rotate" [style.transform]="rotationTransform">
+      <div class="knob-indicator"></div>
+    </div>
+  </div>
+</div>

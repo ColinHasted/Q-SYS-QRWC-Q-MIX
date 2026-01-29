@@ -5,73 +5,8 @@ import { CommonModule } from '@angular/common';
   selector: 'app-rotary-knob',
   standalone: true,
   imports: [CommonModule],
-  styles: [`
-    :host {
-      display: block;
-    }
-    .knob-container {
-      position: relative;
-      cursor: pointer;
-      touch-action: none;
-    }
-    .knob-body {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background: linear-gradient(145deg, #3a3a3a 0%, #2a2a2a 50%, #1a1a1a 100%);
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
-      position: relative;
-    }
-    .knob-indicator {
-      position: absolute;
-      width: 4px;
-      height: 10px;
-      background: linear-gradient(180deg, #fff 0%, #aaa 100%);
-      border-radius: 2px;
-      box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
-      top: 3px;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-    .knob-rotate {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-    }
-    .knob-container.large .knob-indicator {
-      width: 5px;
-      height: 12px;
-    }
-    .knob-container.small .knob-indicator {
-      width: 3px;
-      height: 8px;
-      top: 2px;
-    }
-    .knob-ring {
-      position: absolute;
-      inset: -4px;
-      border-radius: 50%;
-      border: 2px solid rgba(0, 0, 0, 0.3);
-      pointer-events: none;
-    }
-  `],
-  template: `
-    <div class="knob-container" 
-         [class.large]="size() === 'large'"
-         [class.small]="size() === 'small'"
-         [style.width.px]="sizePixels"
-         [style.height.px]="sizePixels"
-         #knobElement
-         (mousedown)="onMouseDown($event)"
-         (touchstart)="onTouchStart($event)">
-      <div class="knob-ring"></div>
-      <div class="knob-body">
-        <div class="knob-rotate" [style.transform]="rotationTransform">
-          <div class="knob-indicator"></div>
-        </div>
-      </div>
-    </div>
-  `
+  templateUrl: './rotary-knob.component.html',
+  styleUrls: ['./rotary-knob.component.scss']
 })
 export class RotaryKnobComponent implements AfterViewInit, OnDestroy {
   @ViewChild('knobElement') knobElement!: ElementRef<HTMLElement>;
@@ -92,11 +27,11 @@ export class RotaryKnobComponent implements AfterViewInit, OnDestroy {
   private boundTouchMove = this.onTouchMove.bind(this);
   private boundTouchEnd = this.onTouchEnd.bind(this);
 
-  get sizePixels(): number {
+  get sizeEm(): string {
     switch (this.size()) {
-      case 'small': return 36;
-      case 'large': return 54;
-      default: return 44;
+      case 'small': return '2.25em';
+      case 'large': return '3.375em';
+      default: return '2.75em';
     }
   }
 

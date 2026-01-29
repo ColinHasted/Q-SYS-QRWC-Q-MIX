@@ -11,7 +11,6 @@
         [hpfFrequency]="channelStrip().hpfFrequency"
         [vuLevel]="getSelectedChannelVU()"
         [clip]="getSelectedChannelClip()"
-        [selectedChannel]="selectedChannel()"
         (gainChange)="updateStripValue('gain', $event)"
         (invertToggle)="toggleStripProp('invert')"
         (phantomToggle)="toggleStripProp('phantom')"
@@ -72,6 +71,8 @@
       <!-- AUX SENDS Section -->
       <app-mixer-aux-sends
         [auxSends]="channelStrip().auxSends"
+                [selectedChannel]="selectedChannel()"
+
         (auxSendChange)="updateAuxSend($event.index, $event.value)"
       />
     </div>
@@ -150,10 +151,10 @@
 
   <!-- Branding -->
   <div class="branding">
-    <span class="brand-logo">
-      <img src="q-sys-emblem-white.svg" alt="Q-SYS" class="brand-emblem" />
-      <span>-MIX</span>
-    </span>
-    <span class="brand-sub">SURFACE</span>
+    <img src="q-sys-emblem-white.svg" alt="Q" class="brand-emblem" />
+    <div class="brand-text">
+      <span class="brand-mix">MIX</span>
+      <span class="brand-surface">SURFACE</span>
+    </div>
   </div>
 </div>

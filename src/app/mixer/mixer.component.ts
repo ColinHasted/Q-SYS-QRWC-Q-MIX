@@ -1,5 +1,4 @@
 import { Component, signal, computed, ViewEncapsulation } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { Channel, ChannelStrip, MasterChannel, EQBand } from './mixer.interfaces';
 import { MixerInputComponent } from './mixer-input/mixer-input.component';
 import { MixerGateComponent } from './mixer-gate/mixer-gate.component';
@@ -13,7 +12,6 @@ import { MixerChannelComponent } from './mixer-channel/mixer-channel.component';
   selector: 'app-mixer',
   standalone: true,
   imports: [
-    FormsModule,
     MixerInputComponent,
     MixerGateComponent,
     MixerCompressorComponent,
@@ -85,10 +83,10 @@ export class MixerComponent {
     limiterThreshold: -6,
     eqOn: false,
     eqBands: [
-      { frequency: 80, gain: 0, q: 1.0, type: 'lowshelf' },
-      { frequency: 500, gain: 0, q: 1.0, type: 'peaking' },
-      { frequency: 2000, gain: 0, q: 1.0, type: 'peaking' },
-      { frequency: 8000, gain: 0, q: 1.0, type: 'highshelf' }
+      { frequency: 80, gain: 0, q: 1.0, type: 'lowshelf', filterType: 'lowpass' },
+      { frequency: 500, gain: 0, q: 1.0, type: 'peaking', filterType: 'bandpass' },
+      { frequency: 2000, gain: 0, q: 1.0, type: 'peaking', filterType: 'bandpass' },
+      { frequency: 8000, gain: 0, q: 1.0, type: 'highshelf', filterType: 'highpass' }
     ],
     delayOn: false,
     delayMs: 0,
@@ -163,7 +161,7 @@ export class MixerComponent {
     this.channelStrip.update(strip => ({ ...strip, [prop]: !strip[prop] }));
   }
 
-  updateEQBand(index: number, property: keyof EQBand, value: number): void {
+  updateEQBand(index: number, property: keyof EQBand, value: number | string): void {
     this.channelStrip.update(strip => ({
       ...strip,
       eqBands: strip.eqBands.map((band, i) =>

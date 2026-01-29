@@ -1,0 +1,55 @@
+:host {
+  display: block;
+}
+
+.knob-container {
+  position: relative;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.knob-body {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #3a3a3a 0%, #2a2a2a 50%, #1a1a1a 100%);
+  box-shadow: inset 0 0.125em 0.25em rgba(0, 0, 0, 0.4);
+  position: relative;
+}
+
+.knob-indicator {
+  position: absolute;
+  width: 0.25em;
+  height: 0.625em;
+  background: linear-gradient(180deg, #fff 0%, #aaa 100%);
+  border-radius: 0.125em;
+  box-shadow: 0 0 0.25em rgba(0, 0, 0, 0.5);
+  top: 0.1875em;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.knob-rotate {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+.knob-container.large .knob-indicator {
+  width: 0.3125em;
+  height: 0.75em;
+}
+
+.knob-container.small .knob-indicator {
+  width: 0.1875em;
+  height: 0.5em;
+  top: 0.125em;
+}
+
+.knob-ring {
+  position: absolute;
+  inset: -0.25em;
+  border-radius: 50%;
+  border: 0.125em solid rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}

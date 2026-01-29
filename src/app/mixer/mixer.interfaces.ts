@@ -53,6 +53,7 @@ export interface EQBand {
   gain: number;
   q: number;
   type: 'lowshelf' | 'highshelf' | 'peaking';
+  filterType: 'lowpass' | 'bandpass' | 'highpass';
 }
 
 export interface MasterChannel {

@@ -1,0 +1,20 @@
+<div class="strip-panel monitor-panel">
+    <div class="panel-header">AUX SENDS</div>
+    <div class="panel-content">
+        <div class="aux-column">
+            @for (send of auxSends(); track $index) {
+            <div class="aux-item">
+                <label>AUX {{ $index + 1 }}</label>
+                <div class="knob-wrapper small">
+                    <app-rotary-knob [value]="send" [min]="-60" [max]="10" [step]="1" size="small"
+                        (valueChange)="onAuxSendChange($index, $event)"></app-rotary-knob>
+                </div>
+            </div>
+            }
+        </div>
+                <div class="channel-display">
+          <span class="display-label">CH</span>
+          <span class="display-value">{{ selectedChannel() }}</span>
+        </div>
+    </div>
+</div>

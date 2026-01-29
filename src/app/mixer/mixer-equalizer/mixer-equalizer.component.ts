@@ -1,193 +1,13 @@
 import { Component, input, output, AfterViewInit, ViewChild, ElementRef, effect } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { EQBand } from '../mixer.interfaces';
 import { RotaryKnobComponent } from '../shared/rotary-knob/rotary-knob.component';
 
 @Component({
   selector: 'app-mixer-equalizer',
   standalone: true,
-  imports: [FormsModule, RotaryKnobComponent],
-  styles: [`:host { display: contents; }`],
-  template: `
-    <div class="strip-panel eq-panel">
-      <div class="panel-header">
-        EQUALISER
-        <button class="panel-toggle eq-toggle header-toggle" [class.active]="on()"
-                (click)="onToggle()">ON</button>
-      </div>
-      <div class="panel-content eq-content-vertical">
-        <!-- Bands Column -->
-        <div class="eq-bands-vertical">
-          <!-- BAND 4 (HI) -->
-          <div class="eq-band-row">
-            <span class="band-label">BAND 4</span>
-            <div class="band-controls">
-              <div class="knob-group">
-                <app-rotary-knob
-                  [value]="bands()[3].gain"
-                  [min]="-18"
-                  [max]="18"
-                  [step]="0.5"
-                  size="small"
-                  (valueChange)="onBandChange(3, 'gain', $event)"
-                />
-                <label>GAIN</label>
-              </div>
-              <div class="knob-group">
-                <app-rotary-knob
-                  [value]="bands()[3].frequency"
-                  [min]="2000"
-                  [max]="20000"
-                  [step]="100"
-                  size="small"
-                  (valueChange)="onBandChange(3, 'frequency', $event)"
-                />
-                <label>FREQUENCY</label>
-              </div>
-              <div class="knob-group">
-                <app-rotary-knob
-                  [value]="bands()[3].q"
-                  [min]="0.1"
-                  [max]="10"
-                  [step]="0.1"
-                  size="small"
-                  (valueChange)="onBandChange(3, 'q', $event)"
-                />
-                <label>WIDTH</label>
-              </div>
-            </div>
-          </div>
-
-          <!-- BAND 3 (HI MID) -->
-          <div class="eq-band-row">
-            <span class="band-label">BAND 3</span>
-            <div class="band-controls">
-              <div class="knob-group">
-                <app-rotary-knob
-                  [value]="bands()[2].gain"
-                  [min]="-18"
-                  [max]="18"
-                  [step]="0.5"
-                  size="small"
-                  (valueChange)="onBandChange(2, 'gain', $event)"
-                />
-                <label>GAIN</label>
-              </div>
-              <div class="knob-group">
-                <app-rotary-knob
-                  [value]="bands()[2].frequency"
-                  [min]="500"
-                  [max]="8000"
-                  [step]="50"
-                  size="small"
-                  (valueChange)="onBandChange(2, 'frequency', $event)"
-                />
-                <label>FREQUENCY</label>
-              </div>
-              <div class="knob-group">
-                <app-rotary-knob
-                  [value]="bands()[2].q"
-                  [min]="0.1"
-                  [max]="10"
-                  [step]="0.1"
-                  size="small"
-                  (valueChange)="onBandChange(2, 'q', $event)"
-                />
-                <label>WIDTH</label>
-              </div>
-            </div>
-          </div>
-
-          <!-- BAND 2 (LO MID) -->
-          <div class="eq-band-row">
-            <span class="band-label">BAND 2</span>
-            <div class="band-controls">
-              <div class="knob-group">
-                <app-rotary-knob
-                  [value]="bands()[1].gain"
-                  [min]="-18"
-                  [max]="18"
-                  [step]="0.5"
-                  size="small"
-                  (valueChange)="onBandChange(1, 'gain', $event)"
-                />
-                <label>GAIN</label>
-              </div>
-              <div class="knob-group">
-                <app-rotary-knob
-                  [value]="bands()[1].frequency"
-                  [min]="100"
-                  [max]="2000"
-                  [step]="10"
-                  size="small"
-                  (valueChange)="onBandChange(1, 'frequency', $event)"
-                />
-                <label>FREQUENCY</label>
-              </div>
-              <div class="knob-group">
-                <app-rotary-knob
-                  [value]="bands()[1].q"
-                  [min]="0.1"
-                  [max]="10"
-                  [step]="0.1"
-                  size="small"
-                  (valueChange)="onBandChange(1, 'q', $event)"
-                />
-                <label>WIDTH</label>
-              </div>
-            </div>
-          </div>
-
-          <!-- BAND 1 (LO) -->
-          <div class="eq-band-row">
-            <span class="band-label">BAND 1</span>
-            <div class="band-controls">
-              <div class="knob-group">
-                <app-rotary-knob
-                  [value]="bands()[0].gain"
-                  [min]="-18"
-                  [max]="18"
-                  [step]="0.5"
-                  size="small"
-                  (valueChange)="onBandChange(0, 'gain', $event)"
-                />
-                <label>GAIN</label>
-              </div>
-              <div class="knob-group">
-                <app-rotary-knob
-                  [value]="bands()[0].frequency"
-                  [min]="20"
-                  [max]="500"
-                  [step]="5"
-                  size="small"
-                  (valueChange)="onBandChange(0, 'frequency', $event)"
-                />
-                <label>FREQUENCY</label>
-              </div>
-              <div class="knob-group">
-                <app-rotary-knob
-                  [value]="bands()[0].q"
-                  [min]="0.1"
-                  [max]="10"
-                  [step]="0.1"
-                  size="small"
-                  (valueChange)="onBandChange(0, 'q', $event)"
-                />
-                <label>WIDTH</label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Large EQ Display -->
-        <div class="eq-display-large">
-          <div class="eq-glass-large">
-            <canvas #eqCanvas></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-  `
+  imports: [ RotaryKnobComponent],
+  templateUrl: './mixer-equalizer.component.html',
+  styleUrls: ['./mixer-equalizer.component.scss']
 })
 export class MixerEqualizerComponent implements AfterViewInit {
   @ViewChild('eqCanvas') eqCanvas!: ElementRef<HTMLCanvasElement>;
@@ -196,7 +16,7 @@ export class MixerEqualizerComponent implements AfterViewInit {
   bands = input.required<EQBand[]>();
 
   toggle = output<void>();
-  bandChange = output<{ index: number; property: keyof EQBand; value: number }>();
+  bandChange = output<{ index: number; property: keyof EQBand; value: number | string }>();
 
   constructor() {
     // Update canvas when bands change
@@ -216,7 +36,7 @@ export class MixerEqualizerComponent implements AfterViewInit {
     this.toggle.emit();
   }
 
-  protected onBandChange(index: number, property: keyof EQBand, value: number): void {
+  protected onBandChange(index: number, property: keyof EQBand, value: number | string): void {
     this.bandChange.emit({ index, property, value });
   }
 
