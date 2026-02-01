@@ -1,0 +1,153 @@
+// Q-Mix Surface - Shared UI Components
+// Styles for reusable UI elements (buttons, displays, etc.)
+
+@use 'sass:color';
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// =============================================================================
+// Panel Buttons (BEM: panel-btn)
+// =============================================================================
+.panel-btn {
+  width: 2em;
+  height: 1.5em;
+  border-radius: 0.1875em;
+  border: 0.0625em solid rgba(0, 0, 0, 0.5);
+  background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 50%, #1a1a1a 100%);
+  color: #888;
+  font-size: 0.5625em;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.4), inset 0 0.0625em 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.15s;
+
+  &:hover {
+    background: linear-gradient(180deg, #4a4a4a 0%, #3a3a3a 50%, #2a2a2a 100%);
+  }
+
+  // BEM modifier
+  &--active,
+  &.active {
+    @include glowing-text($glow-cyan);
+    background: linear-gradient(180deg, #1a4a5a 0%, #0a3a4a 50%, #002a3a 100%);
+    border-color: $glow-cyan;
+    box-shadow: 0 0 0.625em rgba($glow-cyan, 0.5);
+  }
+
+  // Phantom power button
+  &--phantom#{&}--active,
+  &.phantom.active {
+    @include glowing-text($glow-red);
+    background: linear-gradient(180deg, #5a1a1a 0%, #4a0a0a 50%, #3a0000 100%);
+    border-color: $glow-red;
+    box-shadow: 0 0 0.625em rgba($glow-red, 0.5);
+  }
+}
+
+// =============================================================================
+// Panel Toggle (BEM: panel-toggle)
+// =============================================================================
+.panel-toggle {
+  padding: 0.3125em 1em;
+  border-radius: 0.1875em;
+  border: 0.0625em solid rgba(0, 0, 0, 0.5);
+  background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 50%, #1a1a1a 100%);
+  color: #888;
+  font-size: 0.625em;
+  font-weight: bold;
+  letter-spacing: 0.0625em;
+  cursor: pointer;
+  box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.4);
+  transition: all 0.15s;
+  margin-top: auto;
+
+  // BEM modifier
+  &--active,
+  &.active {
+    @include glowing-text($glow-green);
+    background: linear-gradient(180deg, #1a4a2a 0%, #0a3a1a 50%, #002a0a 100%);
+    border-color: $glow-green;
+    box-shadow: 0 0 0.75em rgba($glow-green, 0.5);
+  }
+
+  // EQ toggle variant
+  &--eq,
+  &.eq-toggle {
+    padding: 0.25em 0.75em;
+    font-size: 0.5625em;
+  }
+}
+
+// =============================================================================
+// Value Display (BEM: value-display)
+// =============================================================================
+.value-display {
+  font-size: 0.625em;
+  color: $glow-cyan;
+  font-family: 'Consolas', monospace;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 0.125em 0.5em;
+  border-radius: 0.1875em;
+  text-shadow: 0 0 0.375em $glow-cyan;
+}
+
+// =============================================================================
+// Button Row (layout helper)
+// =============================================================================
+.button-row {
+  display: flex;
+  gap: 0.375em;
+}
+
+// =============================================================================
+// Knob Group (BEM: knob-group)
+// =============================================================================
+.knob-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1875rem;
+
+  label,
+  &__label {
+    font-size: 0.5rem;
+    color: rgba(255, 255, 255, 0.9);
+    text-transform: uppercase;
+    letter-spacing: 0.03125rem;
+    text-shadow: 0 0.0625rem 0.0625rem rgba(0, 0, 0, 0.5);
+  }
+
+  // Threshold knob positioning
+  &--threshold,
+  &.threshold-knob {
+    margin-top: 0.25rem;
+  }
+}
+
+.knob-row {
+  display: flex;
+  gap: 0.625rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+// =============================================================================
+// Header Toggle (in-header buttons)
+// =============================================================================
+.header-toggle {
+  position: absolute;
+  right: 0.5em;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0.125em 0.5em;
+  font-size: 0.5625em;
+}
+
+// =============================================================================
+// AUX Grid Layout
+// =============================================================================
+.aux-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5em;
+}

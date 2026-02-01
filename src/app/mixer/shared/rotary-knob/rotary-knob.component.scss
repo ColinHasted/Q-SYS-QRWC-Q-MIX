@@ -1,14 +1,39 @@
+@use '../../../scss/variables' as *;
+@use '../../../scss/mixins' as *;
+
 :host {
   display: block;
 }
 
-.knob-container {
+// =============================================================================
+// Knob Block (BEM: knob)
+// =============================================================================
+
+// Main container
+.knob {
   position: relative;
   cursor: pointer;
   touch-action: none;
+
+  // Size modifiers
+  &--large {
+    .knob__indicator {
+      width: 0.3125em;
+      height: 0.75em;
+    }
+  }
+
+  &--small {
+    .knob__indicator {
+      width: 0.1875em;
+      height: 0.5em;
+      top: 0.125em;
+    }
+  }
 }
 
-.knob-body {
+// Knob body (the circular element)
+.knob__body {
   width: 100%;
   height: 100%;
   border-radius: 50%;
@@ -17,7 +42,15 @@
   position: relative;
 }
 
-.knob-indicator {
+// Rotation wrapper
+.knob__rotate {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+// Position indicator (the line showing rotation)
+.knob__indicator {
   position: absolute;
   width: 0.25em;
   height: 0.625em;
@@ -29,27 +62,178 @@
   transform: translateX(-50%);
 }
 
-.knob-rotate {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-}
-
-.knob-container.large .knob-indicator {
-  width: 0.3125em;
-  height: 0.75em;
-}
-
-.knob-container.small .knob-indicator {
-  width: 0.1875em;
-  height: 0.5em;
-  top: 0.125em;
-}
-
-.knob-ring {
+// Outer ring decoration
+.knob__ring {
   position: absolute;
   inset: -0.25em;
   border-radius: 50%;
   border: 0.125em solid rgba(0, 0, 0, 0.3);
   pointer-events: none;
+}
+
+// =============================================================================
+// Knob Wrapper Block (BEM: knob-wrapper)
+// The decorative housing around the knob
+// =============================================================================
+
+.knob-wrapper {
+  width: 2.75em;
+  height: 2.75em;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #0a0a0a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 0.1875em 0.5em rgba(0, 0, 0, 0.6),
+    inset 0 0.0625em 0 rgba(255, 255, 255, 0.1),
+    0 0 0 0.125em rgba(0, 0, 0, 0.3);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0.1875em;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #3a3a3a 0%, #2a2a2a 50%, #1a1a1a 100%);
+    box-shadow: inset 0 0.125em 0.25em rgba(0, 0, 0, 0.4);
+  }
+
+  // Size modifiers
+  &--large {
+    width: 3.375em;
+    height: 3.375em;
+  }
+
+  &--small {
+    width: 2.25em;
+    height: 2.25em;
+  }
+
+  // Style modifier for gain knob
+  &--gain::before {
+    background: linear-gradient(145deg, #4a4a4a 0%, #3a3a3a 50%, #2a2a2a 100%);
+  }
+}
+
+// =============================================================================
+// Rotary Knob Input (for range input styling)
+// =============================================================================
+
+.rotary-knob {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 2.125em;
+  height: 2.125em;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 0.5em;
+    height: 1.25em;
+    background: linear-gradient(90deg, #888 0%, #fff 50%, #888 100%);
+    border-radius: 0.125em;
+    cursor: pointer;
+    box-shadow: 0 0 0.25em rgba(0, 0, 0, 0.5);
+    transform: translateY(-0.1875em);
+  }
+
+  &::-moz-range-thumb {
+    width: 0.5em;
+    height: 1.25em;
+    background: linear-gradient(90deg, #888 0%, #fff 50%, #888 100%);
+    border-radius: 0.125em;
+    cursor: pointer;
+    border: none;
+  }
+}
+
+// Size variations for rotary knob input
+.knob-wrapper--small .rotary-knob {
+  width: 1.625em;
+  height: 1.625em;
+
+  &::-webkit-slider-thumb {
+    width: 0.375em;
+    height: 0.875em;
+  }
+}
+
+.knob-wrapper--large .rotary-knob {
+  width: 2.75em;
+  height: 2.75em;
+
+  &::-webkit-slider-thumb {
+    width: 0.625em;
+    height: 1.5em;
+  }
+}
+
+// =============================================================================
+// Legacy class support (for backward compatibility)
+// =============================================================================
+.knob-container {
+  @extend .knob;
+  
+  &.large {
+    @extend .knob--large;
+  }
+  
+  &.small {
+    @extend .knob--small;
+  }
+}
+
+.knob-body {
+  @extend .knob__body;
+}
+
+.knob-rotate {
+  @extend .knob__rotate;
+}
+
+.knob-indicator {
+  @extend .knob__indicator;
+}
+
+.knob-ring {
+  @extend .knob__ring;
+}
+
+// Legacy size classes for knob-wrapper
+.knob-wrapper.large {
+  @extend .knob-wrapper--large;
+}
+
+.knob-wrapper.small {
+  @extend .knob-wrapper--small;
+}
+
+.knob-wrapper.gain-knob {
+  @extend .knob-wrapper--gain;
+}
+
+// Legacy size classes for rotary-knob inside small/large wrappers
+.small .rotary-knob {
+  width: 1.625em;
+  height: 1.625em;
+
+  &::-webkit-slider-thumb {
+    width: 0.375em;
+    height: 0.875em;
+  }
+}
+
+.large .rotary-knob {
+  width: 2.75em;
+  height: 2.75em;
+
+  &::-webkit-slider-thumb {
+    width: 0.625em;
+    height: 1.5em;
+  }
 }

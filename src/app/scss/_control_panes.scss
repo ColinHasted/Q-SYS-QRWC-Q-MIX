@@ -1,0 +1,107 @@
+@use 'sass:color';
+@use 'variables'as *;
+
+// Colored control pane - Shared across components
+.control-pane {
+  border-radius: 0.375em;
+  padding: 0.625em;
+  display: flex;
+  gap:0.5em;
+  flex-direction: column;
+  box-shadow:
+    inset 0 0.0625em 0 rgba(255, 255, 255, 0.2),
+    inset 0 -0.125em 0.25em rgba(0, 0, 0, 0.3),
+    0 0.125em 0.5em rgba(0, 0, 0, 0.5);
+  border: 0.0625em solid rgba(0, 0, 0, 0.4);
+  flex: 1;
+  min-height: 0;
+
+  &--in {
+    background: linear-gradient(180deg, color.scale($panel-in, $lightness: 20%) 0%, $panel-in 30%, color.scale($panel-in, $lightness: -20%) 100%);
+    min-width: 4.5em;
+    flex: 0.55;
+    padding: 0.375em;
+  }
+
+  &--hpf {
+    background: linear-gradient(180deg, color.scale($panel-hpf, $lightness: 20%) 0%, $panel-hpf 30%, color.scale($panel-hpf, $lightness: -20%) 100%);
+    min-width: 4.5em;
+    flex: 0.45;
+  }
+
+  &--gate {
+    background: linear-gradient(180deg, color.scale($panel-gate, $lightness: 20%) 0%, $panel-gate 30%, color.scale($panel-gate, $lightness: -20%) 100%);
+    min-width: 10em;
+  }
+
+  &--comp {
+    background: linear-gradient(180deg, color.scale($panel-comp, $lightness: 20%) 0%, $panel-comp 30%, color.scale($panel-comp, $lightness: -20%) 100%);
+    min-width: 8.75em;
+  }
+
+  &--eq {
+    background: linear-gradient(180deg, color.scale($panel-eq, $lightness: 20%) 0%, $panel-eq 30%, color.scale($panel-eq, $lightness: -20%) 100%);
+    min-width: 18em;
+    flex: 3.5;
+  }
+
+  &--limiter {
+    background: linear-gradient(180deg, color.scale($panel-limiter, $lightness: 20%) 0%, $panel-limiter 30%, color.scale($panel-limiter, $lightness: -20%) 100%);
+    min-width: 6em;
+  }
+
+  &--out {
+    background: linear-gradient(180deg, color.scale($panel-out, $lightness: 20%) 0%, $panel-out 30%, color.scale($panel-out, $lightness: -20%) 100%);
+    min-width: 6.875em;
+  }
+
+  &--monitor {
+    background: linear-gradient(180deg, color.scale($panel-monitor, $lightness: 20%) 0%, $panel-monitor 30%, color.scale($panel-monitor, $lightness: -20%) 100%);
+    min-width: 6.5em;
+  }
+
+  &--cue {
+    background: linear-gradient(180deg, color.scale($panel-cue, $lightness: 20%) 0%, $panel-cue 30%, color.scale($panel-cue, $lightness: -20%) 100%);
+    min-width: 6.5em;
+  }
+
+  &--aux-master {
+    background: linear-gradient(180deg, color.scale($panel-aux-master, $lightness: 20%) 0%, $panel-aux-master 30%, color.scale($panel-aux-master, $lightness: -20%) 100%);
+    min-width: 14em;
+  }
+
+  &__header {
+    font-size: 0.6875em;
+    font-weight: bold;
+    letter-spacing: 0.0625em;
+    text-align: center;
+    color: #fff;
+    text-shadow: 0 0.0625em 0.125em rgba(0, 0, 0, 0.5);
+    padding: 0.25em 0.5em;
+    margin: -0.5em -0.5em 0.5em -0.5em;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 0.3125em 0.3125em 0 0;
+    border-bottom: 0.0625em solid rgba(0, 0, 0, 0.3);
+    position: relative;
+  }
+
+  &__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    align-items: center;
+    min-height: 0;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .panel-toggle {
+      margin-top: 0;
+      min-width: 5em;
+    }
+  }
+}

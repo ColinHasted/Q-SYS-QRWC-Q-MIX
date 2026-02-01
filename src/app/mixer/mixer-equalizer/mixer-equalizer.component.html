@@ -1,141 +1,68 @@
-<div class="strip-panel eq-panel">
-  <div class="panel-header">EQUALISER</div>
-  
-  <div class="eq-hexagon-layout">
-    <!-- Hexagon frame with bands at corners -->
-    <div class="hex-frame">
-      <!-- Top-left corner - Band 1 (LO) -->
-      <div class="hex-corner corner-tl">
-        <div class="band-number">1</div>
-        <div class="hex-knobs">
-          <div class="hex-knob">
-            <span class="knob-label">G</span>
-            <app-rotary-knob [value]="bands()[0].gain" [min]="-18" [max]="18" [step]="0.5" size="small"
-              (valueChange)="onBandChange(0, 'gain', $event)" />
-          </div>
-          <div class="hex-knob">
-            <span class="knob-label">F</span>
-            <app-rotary-knob [value]="bands()[0].frequency" [min]="20" [max]="500" [step]="5" size="small"
-              (valueChange)="onBandChange(0, 'frequency', $event)" />
-          </div>
-          <div class="hex-knob">
-            <span class="knob-label">Q</span>
-            <app-rotary-knob [value]="bands()[0].q" [min]="0.1" [max]="10" [step]="0.1" size="small"
-              (valueChange)="onBandChange(0, 'q', $event)" />
-          </div>
-        </div>
-        <div class="filter-type-selector">
-          <button class="filter-btn" [class.active]="bands()[0].filterType === 'lowpass'"
-                  (click)="onBandChange(0, 'filterType', 'lowpass')" title="Low Shelf">LP</button>
-          <button class="filter-btn" [class.active]="bands()[0].filterType === 'bandpass'"
-                  (click)="onBandChange(0, 'filterType', 'bandpass')" title="Bell">PK</button>
-          <button class="filter-btn" [class.active]="bands()[0].filterType === 'highpass'"
-                  (click)="onBandChange(0, 'filterType', 'highpass')" title="High Pass">HP</button>
-        </div>
-      </div>
+<div class="control-pane control-pane--eq">
+  <div class="control-pane__header">EQUALISER</div>
 
-      <!-- Top-right corner - Band 2 (LO MID) -->
-      <div class="hex-corner corner-tr">
-        <div class="band-number">2</div>
-        <div class="hex-knobs">
-          <div class="hex-knob">
-            <span class="knob-label">G</span>
-            <app-rotary-knob [value]="bands()[1].gain" [min]="-18" [max]="18" [step]="0.5" size="small"
-              (valueChange)="onBandChange(1, 'gain', $event)" />
-          </div>
-          <div class="hex-knob">
-            <span class="knob-label">F</span>
-            <app-rotary-knob [value]="bands()[1].frequency" [min]="100" [max]="2000" [step]="10" size="small"
-              (valueChange)="onBandChange(1, 'frequency', $event)" />
-          </div>
-          <div class="hex-knob">
-            <span class="knob-label">Q</span>
-            <app-rotary-knob [value]="bands()[1].q" [min]="0.1" [max]="10" [step]="0.1" size="small"
-              (valueChange)="onBandChange(1, 'q', $event)" />
-          </div>
-        </div>
-        <div class="filter-type-selector">
-          <button class="filter-btn" [class.active]="bands()[1].filterType === 'lowpass'"
-                  (click)="onBandChange(1, 'filterType', 'lowpass')" title="Low Shelf">LP</button>
-          <button class="filter-btn" [class.active]="bands()[1].filterType === 'bandpass'"
-                  (click)="onBandChange(1, 'filterType', 'bandpass')" title="Bell">PK</button>
-          <button class="filter-btn" [class.active]="bands()[1].filterType === 'highpass'"
-                  (click)="onBandChange(1, 'filterType', 'highpass')" title="High Pass">HP</button>
-        </div>
-      </div>
-
-      <!-- Center hexagonal display -->
-      <div class="hex-display">
-        <div class="hex-glass">
-          <canvas #eqCanvas></canvas>
-          <div class="eq-freq-labels">
-            <span>20</span><span>100</span><span>1k</span><span>10k</span><span>20k</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Bottom-left corner - Band 3 (HI MID) -->
-      <div class="hex-corner corner-bl">
-        <div class="band-number">3</div>
-        <div class="hex-knobs">
-          <div class="hex-knob">
-            <span class="knob-label">G</span>
-            <app-rotary-knob [value]="bands()[2].gain" [min]="-18" [max]="18" [step]="0.5" size="small"
-              (valueChange)="onBandChange(2, 'gain', $event)" />
-          </div>
-          <div class="hex-knob">
-            <span class="knob-label">F</span>
-            <app-rotary-knob [value]="bands()[2].frequency" [min]="500" [max]="8000" [step]="50" size="small"
-              (valueChange)="onBandChange(2, 'frequency', $event)" />
-          </div>
-          <div class="hex-knob">
-            <span class="knob-label">Q</span>
-            <app-rotary-knob [value]="bands()[2].q" [min]="0.1" [max]="10" [step]="0.1" size="small"
-              (valueChange)="onBandChange(2, 'q', $event)" />
-          </div>
-        </div>
-        <div class="filter-type-selector">
-          <button class="filter-btn" [class.active]="bands()[2].filterType === 'lowpass'"
-                  (click)="onBandChange(2, 'filterType', 'lowpass')" title="Low Shelf">LP</button>
-          <button class="filter-btn" [class.active]="bands()[2].filterType === 'bandpass'"
-                  (click)="onBandChange(2, 'filterType', 'bandpass')" title="Bell">PK</button>
-          <button class="filter-btn" [class.active]="bands()[2].filterType === 'highpass'"
-                  (click)="onBandChange(2, 'filterType', 'highpass')" title="High Pass">HP</button>
-        </div>
-      </div>
-
-      <!-- Bottom-right corner - Band 4 (HI) -->
-      <div class="hex-corner corner-br">
-        <div class="band-number">4</div>
-        <div class="hex-knobs">
-          <div class="hex-knob">
-            <span class="knob-label">G</span>
-            <app-rotary-knob [value]="bands()[3].gain" [min]="-18" [max]="18" [step]="0.5" size="small"
-              (valueChange)="onBandChange(3, 'gain', $event)" />
-          </div>
-          <div class="hex-knob">
-            <span class="knob-label">F</span>
-            <app-rotary-knob [value]="bands()[3].frequency" [min]="2000" [max]="20000" [step]="100" size="small"
-              (valueChange)="onBandChange(3, 'frequency', $event)" />
-          </div>
-          <div class="hex-knob">
-            <span class="knob-label">Q</span>
-            <app-rotary-knob [value]="bands()[3].q" [min]="0.1" [max]="10" [step]="0.1" size="small"
-              (valueChange)="onBandChange(3, 'q', $event)" />
-          </div>
-        </div>
-        <div class="filter-type-selector">
-          <button class="filter-btn" [class.active]="bands()[3].filterType === 'lowpass'"
-                  (click)="onBandChange(3, 'filterType', 'lowpass')" title="Low Shelf">LP</button>
-          <button class="filter-btn" [class.active]="bands()[3].filterType === 'bandpass'"
-                  (click)="onBandChange(3, 'filterType', 'bandpass')" title="Bell">PK</button>
-          <button class="filter-btn" [class.active]="bands()[3].filterType === 'highpass'"
-                  (click)="onBandChange(3, 'filterType', 'highpass')" title="High Pass">HP</button>
+  <div class="equalizer">
+    <!-- EQ Response Display - constrained 16:9 -->
+    <div class="equalizer__display-wrapper">
+      <div class="equalizer__display">
+        <canvas #eqCanvas></canvas>
+        <div class="equalizer__freq-labels">
+          <span>20</span><span>100</span><span>1k</span><span>10k</span><span>20k</span>
         </div>
       </div>
     </div>
+
+    <!-- All 6 bands in a row -->
+    <div class="equalizer__bands">
+      @for (band of bands(); track $index) {
+        <div class="equalizer__band" [class.equalizer__band--active]="band.gain !== 0">
+          <div class="equalizer__band-header">{{ $index + 1 }}</div>
+          <div class="equalizer__band-knobs">
+            <div class="equalizer__knob-row">
+              <span class="equalizer__knob-label">G</span>
+              <app-rotary-knob [value]="band.gain" [min]="-18" [max]="18" [step]="0.5" size="normal"
+                (valueChange)="onBandChange($index, 'gain', $event)" />
+            </div>
+            <div class="equalizer__knob-row">
+              <span class="equalizer__knob-label">F</span>
+              <app-rotary-knob [value]="band.frequency"
+                [min]="bandRanges[$index].min"
+                [max]="bandRanges[$index].max"
+                [step]="bandRanges[$index].step"
+                size="normal"
+                (valueChange)="onBandChange($index, 'frequency', $event)" />
+            </div>
+            <div class="equalizer__knob-row">
+              <span class="equalizer__knob-label">Q</span>
+              <app-rotary-knob [value]="band.q" [min]="0.1" [max]="10" [step]="0.1" size="normal"
+                (valueChange)="onBandChange($index, 'q', $event)" />
+            </div>
+          </div>
+          <div class="equalizer__filter-selector">
+            <button class="equalizer__filter-btn equalizer__filter-btn--first"
+                    [class.equalizer__filter-btn--active]="band.filterType === 'lowpass'"
+                    (click)="onBandChange($index, 'filterType', 'lowpass')">
+              <img src="icons/filters/low-shelf.svg" alt="Low Shelf">
+            </button>
+            <button class="equalizer__filter-btn equalizer__filter-btn--middle"
+                    [class.equalizer__filter-btn--active]="band.filterType === 'bandpass'"
+                    (click)="onBandChange($index, 'filterType', 'bandpass')">
+              <img src="icons/filters/bell.svg" alt="Band Pass">
+            </button>
+            <button class="equalizer__filter-btn equalizer__filter-btn--last"
+                    [class.equalizer__filter-btn--active]="band.filterType === 'highpass'"
+                    (click)="onBandChange($index, 'filterType', 'highpass')">
+              <img src="icons/filters/high-shelf.svg" alt="High Shelf">
+            </button>
+          </div>
+        </div>
+      }
+    </div>
   </div>
-  
-  <button class="panel-btn eq-enable-btn" [class.active]="on()"
-          (click)="onToggle()">EQ</button>
+
+  <div class="control-pane__footer">
+    <button class="panel-toggle" [class.active]="on()"
+            (click)="onToggle()">EQ</button>
+  </div>
 </div>
+

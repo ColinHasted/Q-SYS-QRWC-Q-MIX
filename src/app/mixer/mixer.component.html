@@ -2,32 +2,41 @@
   <!-- Top Section - Channel Strip Processing -->
   <div class="mixer__top">
     <div class="channel-strip">
-      <!-- IN Section -->
-      <app-mixer-input
-        [gain]="channelStrip().gain"
-        [invert]="channelStrip().invert"
-        [phantom]="channelStrip().phantom"
-        [hpfOn]="channelStrip().hpfOn"
-        [hpfFrequency]="channelStrip().hpfFrequency"
-        [vuLevel]="getSelectedChannelVU()"
-        [clip]="getSelectedChannelClip()"
-        (gainChange)="updateStripValue('gain', $event)"
-        (invertToggle)="toggleStripProp('invert')"
-        (phantomToggle)="toggleStripProp('phantom')"
-        (hpfToggle)="toggleStripProp('hpfOn')"
-        (hpfFrequencyChange)="updateStripValue('hpfFrequency', $event)"
-      />
+      <!-- IN + HPF Section -->
+      <div class="input-stack">
+        <app-mixer-input
+          [on]="channelStrip().inputOn"
+          [gain]="channelStrip().gain"
+          [invert]="channelStrip().invert"
+          [phantom]="channelStrip().phantom"
+          [vuLevel]="getSelectedChannelVU()"
+          [clip]="getSelectedChannelClip()"
+          (toggle)="toggleStripProp('inputOn')"
+          (gainChange)="updateStripValue('gain', $event)"
+          (invertToggle)="toggleStripProp('invert')"
+          (phantomToggle)="toggleStripProp('phantom')"
+        />
+
+        <app-mixer-hpf
+          [on]="channelStrip().hpfOn"
+          [frequency]="channelStrip().hpfFrequency"
+          (toggle)="toggleStripProp('hpfOn')"
+          (frequencyChange)="updateStripValue('hpfFrequency', $event)"
+        />
+      </div>
 
       <!-- GATE Section -->
       <app-mixer-gate
         [on]="channelStrip().gateOn"
         [threshold]="channelStrip().gateThreshold"
         [attack]="channelStrip().gateAttack"
+        [hold]="channelStrip().gateHold"
         [release]="channelStrip().gateRelease"
         [range]="channelStrip().gateRange"
         (toggle)="toggleStripProp('gateOn')"
         (thresholdChange)="updateStripValue('gateThreshold', $event)"
         (attackChange)="updateStripValue('gateAttack', $event)"
+        (holdChange)="updateStripValue('gateHold', $event)"
         (releaseChange)="updateStripValue('gateRelease', $event)"
         (rangeChange)="updateStripValue('gateRange', $event)"
       />
@@ -37,14 +46,18 @@
         [on]="channelStrip().compOn"
         [threshold]="channelStrip().compThreshold"
         [ratio]="channelStrip().compRatio"
+        [knee]="channelStrip().compKnee"
         [attack]="channelStrip().compAttack"
         [release]="channelStrip().compRelease"
+        [depth]="channelStrip().compDepth"
         [makeup]="channelStrip().compMakeup"
         (toggle)="toggleStripProp('compOn')"
         (thresholdChange)="updateStripValue('compThreshold', $event)"
         (ratioChange)="updateStripValue('compRatio', $event)"
+        (kneeChange)="updateStripValue('compKnee', $event)"
         (attackChange)="updateStripValue('compAttack', $event)"
         (releaseChange)="updateStripValue('compRelease', $event)"
+        (depthChange)="updateStripValue('compDepth', $event)"
         (makeupChange)="updateStripValue('compMakeup', $event)"
       />
 
@@ -56,16 +69,26 @@
         (bandChange)="updateEQBand($event.index, $event.property, $event.value)"
       />
 
+      <!-- LIMITER Section -->
+      <app-mixer-limiter
+        [on]="channelStrip().limiterOn"
+        [threshold]="channelStrip().limiterThreshold"
+        [attack]="channelStrip().limiterAttack"
+        [release]="channelStrip().limiterRelease"
+        [ceiling]="channelStrip().limiterCeiling"
+        (toggle)="toggleStripProp('limiterOn')"
+        (thresholdChange)="updateStripValue('limiterThreshold', $event)"
+        (attackChange)="updateStripValue('limiterAttack', $event)"
+        (releaseChange)="updateStripValue('limiterRelease', $event)"
+        (ceilingChange)="updateStripValue('limiterCeiling', $event)"
+      />
+
       <!-- OUT Section -->
       <app-mixer-output
         [delayOn]="channelStrip().delayOn"
         [delayMs]="channelStrip().delayMs"
-        [limiterOn]="channelStrip().limiterOn"
-        [limiterThreshold]="channelStrip().limiterThreshold"
         (delayToggle)="toggleStripProp('delayOn')"
         (delayChange)="updateStripValue('delayMs', $event)"
-        (limiterToggle)="toggleStripProp('limiterOn')"
-        (limiterThresholdChange)="updateStripValue('limiterThreshold', $event)"
       />
 
       <!-- AUX SENDS Section -->
@@ -75,6 +98,26 @@
 
         (auxSendChange)="updateAuxSend($event.index, $event.value)"
       />
+
+      <!-- CUE + AUX MASTER Stack -->
+      <div class="cue-aux-stack">
+        <app-mixer-cue
+          [on]="cue().on"
+          [gain]="cue().gain"
+          [vuLevelL]="cue().vuLevelL"
+          [vuLevelR]="cue().vuLevelR"
+          [clipL]="cue().clipL"
+          [clipR]="cue().clipR"
+          (toggle)="toggleCue()"
+          (gainChange)="updateCueGain($event)"
+        />
+
+        <app-mixer-aux-master
+          [auxMasters]="auxMasters()"
+          (gainChange)="updateAuxMasterGain($event.index, $event.value)"
+          (muteToggle)="toggleAuxMasterMute($event)"
+        />
+      </div>
     </div>
   </div>
 
@@ -132,16 +175,49 @@
 
           <!-- Master Fader -->
           <div class="fader-track master-track">
+            <div class="fader-scale-left">
+              <div class="scale-mark major"><span class="tick"></span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark major"><span class="tick"></span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark major"><span class="tick"></span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark major"><span class="tick"></span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark major"><span class="tick"></span></div>
+            </div>
+            
             <input type="range" class="fader master-fader" min="0" max="100"
                    [value]="master().faderValue"
                    (input)="updateMasterFader(+$any($event.target).value)"
                    orient="vertical">
-            <div class="fader-scale">
-              <span>+10</span>
-              <span>0</span>
-              <span>-10</span>
-              <span>-20</span>
-              <span>-∞</span>
+            
+            <div class="fader-scale-right">
+              <div class="scale-mark major"><span class="tick"></span><span class="label">10</span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark major"><span class="tick"></span><span class="label">0</span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark major"><span class="tick"></span><span class="label">-10</span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark major"><span class="tick"></span><span class="label">-20</span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark minor"><span class="tick"></span></div>
+              <div class="scale-mark major"><span class="tick"></span><span class="label">-∞</span></div>
             </div>
           </div>
         </div>
@@ -151,10 +227,10 @@
 
   <!-- Branding -->
   <div class="branding">
-    <img src="q-sys-emblem-white.svg" alt="Q" class="brand-emblem" />
-    <div class="brand-text">
-      <span class="brand-mix">MIX</span>
-      <span class="brand-surface">SURFACE</span>
+    <img src="q-sys-emblem-white.svg" alt="Q" class="branding__emblem" />
+    <div class="branding__text">
+      <span class="branding__mix">MIX</span>
+      <span class="branding__surface">SURFACE</span>
     </div>
   </div>
 </div>

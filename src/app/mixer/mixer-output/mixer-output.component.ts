@@ -11,13 +11,9 @@ import { RotaryKnobComponent } from '../shared/rotary-knob/rotary-knob.component
 export class MixerOutputComponent {
   delayOn = input.required<boolean>();
   delayMs = input.required<number>();
-  limiterOn = input.required<boolean>();
-  limiterThreshold = input.required<number>();
 
   delayToggle = output<void>();
   delayChange = output<number>();
-  limiterToggle = output<void>();
-  limiterThresholdChange = output<number>();
 
   protected onDelayToggle(): void {
     this.delayToggle.emit();
@@ -25,13 +21,5 @@ export class MixerOutputComponent {
 
   protected onDelayChange(value: number): void {
     this.delayChange.emit(value);
-  }
-
-  protected onLimiterToggle(): void {
-    this.limiterToggle.emit();
-  }
-
-  protected onLimiterThresholdChange(value: number): void {
-    this.limiterThresholdChange.emit(value);
   }
 }

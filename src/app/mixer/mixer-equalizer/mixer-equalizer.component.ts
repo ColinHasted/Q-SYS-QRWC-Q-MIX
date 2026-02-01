@@ -1,11 +1,11 @@
-import { Component, input, output, AfterViewInit, ViewChild, ElementRef, effect } from '@angular/core';
+import { Component, input, output, AfterViewInit, ViewChild, ElementRef, effect, signal } from '@angular/core';
 import { EQBand } from '../mixer.interfaces';
 import { RotaryKnobComponent } from '../shared/rotary-knob/rotary-knob.component';
 
 @Component({
   selector: 'app-mixer-equalizer',
   standalone: true,
-  imports: [ RotaryKnobComponent],
+  imports: [RotaryKnobComponent],
   templateUrl: './mixer-equalizer.component.html',
   styleUrls: ['./mixer-equalizer.component.scss']
 })
@@ -18,10 +18,24 @@ export class MixerEqualizerComponent implements AfterViewInit {
   toggle = output<void>();
   bandChange = output<{ index: number; property: keyof EQBand; value: number | string }>();
 
+  // Selected band index (0-5)
+  selectedBand = signal(0);
+
+  // Frequency ranges for each band
+  readonly bandRanges = [
+    { min: 20, max: 500, step: 5 },      // Band 1 - Low
+    { min: 100, max: 2000, step: 10 },   // Band 2 - Low Mid
+    { min: 500, max: 8000, step: 50 },   // Band 3 - Mid
+    { min: 100, max: 1000, step: 10 },   // Band 4 - Low Mid 2
+    { min: 1000, max: 10000, step: 50 }, // Band 5 - High Mid
+    { min: 2000, max: 20000, step: 100 } // Band 6 - High
+  ];
+
   constructor() {
     // Update canvas when bands change
     effect(() => {
       const currentBands = this.bands();
+      this.selectedBand(); // Track selected band for highlight
       if (this.eqCanvas) {
         this.drawEQResponse(currentBands);
       }
@@ -36,8 +50,20 @@ export class MixerEqualizerComponent implements AfterViewInit {
     this.toggle.emit();
   }
 
+  protected selectBand(index: number): void {
+    this.selectedBand.set(index);
+  }
+
   protected onBandChange(index: number, property: keyof EQBand, value: number | string): void {
     this.bandChange.emit({ index, property, value });
+  }
+
+  protected get currentBand(): EQBand {
+    return this.bands()[this.selectedBand()];
+  }
+
+  protected get currentBandRange() {
+    return this.bandRanges[this.selectedBand()];
   }
 
   private drawEQResponse(bands: EQBand[]): void {

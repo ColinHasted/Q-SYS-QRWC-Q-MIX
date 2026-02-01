@@ -13,11 +13,15 @@ $brushed-metal: linear-gradient(90deg,
 
 // Panel Colors (Soundcraft style)
 $panel-in: #2a6a7a;
+$panel-hpf: #5a5a7a;
 $panel-gate: #4a8a4a;
 $panel-comp: #5a9a5a;
 $panel-eq: #aa4444;
+$panel-limiter: #8a3a3a;
 $panel-out: #aa8833;
 $panel-monitor: #3a5a8a;
+$panel-cue: #7a5a8a;        // Purple for Cue
+$panel-aux-master: #5a7a5a; // Darker green for Aux Master
 
 $glow-cyan: #00ffff;
 $glow-green: #00ff66;

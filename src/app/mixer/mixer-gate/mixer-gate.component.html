@@ -1,6 +1,6 @@
-<div class="strip-panel gate-panel">
-  <div class="panel-header">GATE</div>
-  <div class="panel-content">
+<div class="control-pane control-pane--gate">
+  <div class="control-pane__header">GATE</div>
+  <div class="control-pane__content">
     <div class="knob-row">
       <div class="knob-group">
         <div class="knob-wrapper">
@@ -9,6 +9,7 @@
             [min]="0.1"
             [max]="10"
             [step]="0.1"
+            size="small"
             (valueChange)="onAttackChange($event)"
           />
         </div>
@@ -17,14 +18,42 @@
       <div class="knob-group">
         <div class="knob-wrapper">
           <app-rotary-knob
+            [value]="hold()"
+            [min]="0"
+            [max]="2000"
+            [step]="1"
+            size="small"
+            (valueChange)="onHoldChange($event)"
+          />
+        </div>
+        <label>HOLD</label>
+      </div>
+      <div class="knob-group">
+        <div class="knob-wrapper">
+          <app-rotary-knob
             [value]="release()"
             [min]="10"
             [max]="1000"
             [step]="1"
+            size="small"
             (valueChange)="onReleaseChange($event)"
           />
         </div>
         <label>RELEASE</label>
+      </div>
+    </div>
+    <div class="knob-row">
+      <div class="knob-group">
+        <div class="knob-wrapper">
+          <app-rotary-knob
+            [value]="threshold()"
+            [min]="-80"
+            [max]="0"
+            [step]="1"
+            (valueChange)="onThresholdChange($event)"
+          />
+        </div>
+        <label>THRESHOLD</label>
       </div>
       <div class="knob-group">
         <div class="knob-wrapper">
@@ -39,21 +68,11 @@
         <label>DEPTH</label>
       </div>
     </div>
-    <div class="knob-row">
-      <div class="knob-group threshold-knob">
-        <div class="knob-wrapper large">
-          <app-rotary-knob
-            [value]="threshold()"
-            [min]="-80"
-            [max]="0"
-            [step]="1"
-            size="large"
-            (valueChange)="onThresholdChange($event)"
-          />
-        </div>
-        <label>THRESHOLD</label>
-      </div>
+    <div class="curve-display">
+      <canvas #curveCanvas></canvas>
     </div>
+  </div>
+  <div class="control-pane__footer">
     <button class="panel-toggle" [class.active]="on()"
             (click)="onToggle()">GATE</button>
   </div>

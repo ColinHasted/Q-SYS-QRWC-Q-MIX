@@ -1,0 +1,78 @@
+<div class="fader-track">
+  <div class="fader-scale-left">
+    <div class="scale-mark major"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark major"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark major"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark major"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark major"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark major"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark major"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark major"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark major"><span class="tick"></span></div>
+  </div>
+  
+  <input type="range" class="fader" [min]="min()" [max]="max()"
+         [value]="value()"
+         (input)="onValueChange(+$any($event.target).value)"
+         >
+  
+  <div class="fader-scale-right">
+    <div class="scale-mark major"><span class="tick"></span><span class="label">10</span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark major"><span class="tick"></span><span class="label">5</span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark major"><span class="tick"></span><span class="label">0</span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark major"><span class="tick"></span><span class="label">10</span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark major"><span class="tick"></span><span class="label">20</span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark major"><span class="tick"></span><span class="label">30</span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark major"><span class="tick"></span><span class="label">40</span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark major"><span class="tick"></span><span class="label">50</span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark major"><span class="tick"></span><span class="label">60</span></div>
+  </div>
+</div>

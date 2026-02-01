@@ -2,11 +2,12 @@ import { Component, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Channel } from '../mixer.interfaces';
 import { RotaryKnobComponent } from '../shared/rotary-knob/rotary-knob.component';
+import { FaderComponent } from '../shared/fader/fader.component';
 
 @Component({
   selector: 'app-mixer-channel',
   standalone: true,
-  imports: [ RotaryKnobComponent],
+  imports: [ RotaryKnobComponent, FaderComponent],
   templateUrl: './mixer-channel.component.html',
   styleUrls: ['./mixer-channel.component.scss']
 })

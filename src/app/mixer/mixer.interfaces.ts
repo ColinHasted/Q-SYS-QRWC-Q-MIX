@@ -13,6 +13,7 @@ export interface Channel {
 
 export interface ChannelStrip {
   // Headamp
+  inputOn: boolean;
   gain: number;
   invert: boolean;
   phantom: boolean;
@@ -30,12 +31,17 @@ export interface ChannelStrip {
   compOn: boolean;
   compThreshold: number;
   compRatio: number;
+  compKnee: number;
   compAttack: number;
   compRelease: number;
+  compDepth: number;
   compMakeup: number;
   // Limiter
   limiterOn: boolean;
   limiterThreshold: number;
+  limiterAttack: number;
+  limiterRelease: number;
+  limiterCeiling: number;
   // EQ Bands
   eqOn: boolean;
   eqBands: EQBand[];

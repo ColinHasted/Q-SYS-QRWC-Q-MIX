@@ -1,0 +1,18 @@
+<div class="control-pane control-pane--hpf">
+  <div class="control-pane__header">HPF</div>
+  <div class="control-pane__content">
+    <app-rotary-knob
+      [value]="frequency()"
+      [min]="20"
+      [max]="400"
+      [step]="5"
+      size="small"
+      (valueChange)="onFrequencyChange($event)"
+    />
+    <span class="hpf-freq">{{ frequency() }}Hz</span>
+  </div>
+  <div class="control-pane__footer">
+    <button class="panel-toggle" [class.active]="on()"
+            (click)="onToggle()">ON</button>
+  </div>
+</div>

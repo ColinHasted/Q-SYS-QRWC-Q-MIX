@@ -1,6 +1,6 @@
-<div class="strip-panel out-panel">
-  <div class="panel-header">OUT</div>
-  <div class="panel-content">
+<div class="control-pane control-pane--out">
+  <div class="control-pane__header">OUT</div>
+  <div class="control-pane__content">
     <div class="out-column">
       <div class="knob-group">
         <div class="knob-wrapper">
@@ -15,23 +15,10 @@
         <label>DELAY</label>
       </div>
       <div class="value-display">{{ delayMs() }}ms</div>
-      <button class="panel-btn" [class.active]="delayOn()"
-              (click)="onDelayToggle()">DLY</button>
-      
-      <div class="knob-group">
-        <div class="knob-wrapper">
-          <app-rotary-knob
-            [value]="limiterThreshold()"
-            [min]="-20"
-            [max]="0"
-            [step]="0.5"
-            (valueChange)="onLimiterThresholdChange($event)"
-          />
-        </div>
-        <label>LIMIT</label>
-      </div>
-      <button class="panel-btn" [class.active]="limiterOn()"
-              (click)="onLimiterToggle()">LIM</button>
     </div>
+  </div>
+  <div class="control-pane__footer">
+    <button class="panel-toggle" [class.active]="delayOn()"
+            (click)="onDelayToggle()">DELAY</button>
   </div>
 </div>

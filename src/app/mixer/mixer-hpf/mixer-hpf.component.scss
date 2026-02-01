@@ -1,0 +1,12 @@
+@use '../../scss/control_panes' as *;
+
+:host {
+  display: contents;
+}
+
+.hpf-freq {
+  font-size: 0.5625em;
+  color: #0cf;
+  font-family: 'Consolas', monospace;
+  margin-top: 0.25em;
+}

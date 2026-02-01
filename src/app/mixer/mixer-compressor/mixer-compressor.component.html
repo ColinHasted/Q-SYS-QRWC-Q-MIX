@@ -1,6 +1,6 @@
-<div class="strip-panel comp-panel">
-  <div class="panel-header">COMP</div>
-  <div class="panel-content">
+<div class="control-pane control-pane--comp">
+  <div class="control-pane__header">COMP</div>
+  <div class="control-pane__content">
     <div class="knob-row">
       <div class="knob-group">
         <div class="knob-wrapper">
@@ -9,6 +9,7 @@
             [min]="0.1"
             [max]="100"
             [step]="0.1"
+            size="small"
             (valueChange)="onAttackChange($event)"
           />
         </div>
@@ -21,13 +22,39 @@
             [min]="10"
             [max]="1000"
             [step]="1"
+            size="small"
             (valueChange)="onReleaseChange($event)"
           />
         </div>
         <label>RELEASE</label>
       </div>
+      <div class="knob-group">
+        <div class="knob-wrapper">
+          <app-rotary-knob
+            [value]="depth()"
+            [min]="0"
+            [max]="100"
+            [step]="1"
+            size="small"
+            (valueChange)="onDepthChange($event)"
+          />
+        </div>
+        <label>DEPTH</label>
+      </div>
     </div>
     <div class="knob-row">
+      <div class="knob-group">
+        <div class="knob-wrapper">
+          <app-rotary-knob
+            [value]="threshold()"
+            [min]="-60"
+            [max]="0"
+            [step]="1"
+            (valueChange)="onThresholdChange($event)"
+          />
+        </div>
+        <label>THRESHOLD</label>
+      </div>
       <div class="knob-group">
         <div class="knob-wrapper">
           <app-rotary-knob
@@ -43,6 +70,18 @@
       <div class="knob-group">
         <div class="knob-wrapper">
           <app-rotary-knob
+            [value]="knee()"
+            [min]="0"
+            [max]="20"
+            [step]="0.5"
+            (valueChange)="onKneeChange($event)"
+          />
+        </div>
+        <label>KNEE</label>
+      </div>
+      <div class="knob-group">
+        <div class="knob-wrapper">
+          <app-rotary-knob
             [value]="makeup()"
             [min]="0"
             [max]="24"
@@ -53,21 +92,11 @@
         <label>GAIN</label>
       </div>
     </div>
-    <div class="knob-row">
-      <div class="knob-group threshold-knob">
-        <div class="knob-wrapper large">
-          <app-rotary-knob
-            [value]="threshold()"
-            [min]="-60"
-            [max]="0"
-            [step]="1"
-            size="large"
-            (valueChange)="onThresholdChange($event)"
-          />
-        </div>
-        <label>THRESHOLD</label>
-      </div>
+    <div class="curve-display">
+      <canvas #curveCanvas></canvas>
     </div>
+  </div>
+  <div class="control-pane__footer">
     <button class="panel-toggle" [class.active]="on()"
             (click)="onToggle()">COMP</button>
   </div>

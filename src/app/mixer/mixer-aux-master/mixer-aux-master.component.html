@@ -1,0 +1,40 @@
+<div class="control-pane control-pane--aux-master">
+  <div class="control-pane__header">AUX MASTER</div>
+  <div class="control-pane__content">
+    <div class="aux-master-grid">
+      @for (aux of auxMasters(); track $index) {
+        <div class="aux-master-column">
+          <div class="aux-master-column__label">AUX {{ $index + 1 }}</div>
+          
+          <!-- VU Meter -->
+          <div class="aux-master-vu">
+            @for (seg of getVUSegments(aux.vuLevel); track $index) {
+              <div class="aux-master-vu__segment"
+                   [class.aux-master-vu__segment--active]="seg"
+                   [class.aux-master-vu__segment--yellow]="$index >= 8 && $index < 10"
+                   [class.aux-master-vu__segment--red]="$index >= 10"></div>
+            }
+            <div class="aux-master-vu__clip" [class.aux-master-vu__clip--active]="aux.clip">C</div>
+          </div>
+
+          <!-- Gain Knob -->
+          <div class="aux-master-column__knob">
+            <app-rotary-knob
+              [value]="aux.gain"
+              [min]="-60"
+              [max]="10"
+              [step]="0.5"
+              size="small"
+              (valueChange)="onGainChange($index, $event)"
+            />
+          </div>
+
+          <!-- Mute Button -->
+          <button class="aux-master-column__mute" 
+                  [class.aux-master-column__mute--active]="aux.mute"
+                  (click)="onMuteToggle($index)">M</button>
+        </div>
+      }
+    </div>
+  </div>
+</div>

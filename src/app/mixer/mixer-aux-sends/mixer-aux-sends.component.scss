@@ -1,21 +1,52 @@
+@use 'control_panes' as *;
+@use 'mixins' as *;
+@use 'variables' as *;
+
 :host { display: contents; }
+
 .aux-column {
   display: flex;
   flex-direction: column;
-  gap: 1em;
+  gap: 1rem;
   align-items: center;
 }
 .aux-item {
   display: flex;
   align-items: center;
-  gap: 0.75em;
+  gap: 0.75rem;
 }
 .aux-item label {
-  font-size: 0.7em;
+  font-size: 0.7rem;
   color: rgba(255, 255, 255, 0.9);
   text-transform: uppercase;
-  letter-spacing: 0.03125em;
-  text-shadow: 0 0.0625em 0.0625em rgba(0, 0, 0, 0.5);
-  min-width: 2em;
+  letter-spacing: 0.03125rem;
+  text-shadow: 0 0.0625rem 0.0625rem rgba(0, 0, 0, 0.5);
+  min-width: 2rem;
   opacity: 0.9;
+}
+
+
+
+.channel-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  width: 5rem;
+  border: 0.09375rem solid rgba(0, 255, 255, 0.3);
+  margin-top: auto;
+
+  &__label {
+    font-size: 1rem;
+    color: #88ccff;
+  }
+
+  &__value {
+    font-size: 2rem;
+    font-weight: bold;
+    @include glowing-text($glow-cyan);
+    font-family: 'Consolas', monospace;
+  }
 }

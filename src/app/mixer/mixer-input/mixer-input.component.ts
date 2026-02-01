@@ -12,8 +12,7 @@ export class MixerInputComponent {
   gain = input.required<number>();
   invert = input.required<boolean>();
   phantom = input.required<boolean>();
-  hpfOn = input.required<boolean>();
-  hpfFrequency = input.required<number>();
+  on = input.required<boolean>();
   vuLevel = input<number>(0);
   clip = input<boolean>(false);
   selectedChannel = input<number>(1);
@@ -21,8 +20,7 @@ export class MixerInputComponent {
   gainChange = output<number>();
   invertToggle = output<void>();
   phantomToggle = output<void>();
-  hpfToggle = output<void>();
-  hpfFrequencyChange = output<number>();
+  toggle = output<void>();
 
   protected getVUSegments(): boolean[] {
     const level = this.vuLevel();
@@ -41,11 +39,7 @@ export class MixerInputComponent {
     this.phantomToggle.emit();
   }
 
-  protected onHpfToggle(): void {
-    this.hpfToggle.emit();
-  }
-
-  protected onHpfFrequencyChange(value: number): void {
-    this.hpfFrequencyChange.emit(value);
+  protected onToggle(): void {
+    this.toggle.emit();
   }
 }

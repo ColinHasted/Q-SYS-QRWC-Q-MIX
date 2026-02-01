@@ -13,7 +13,7 @@ html, body {
   overflow: hidden;
   background: #0a1520;
   font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
-
+  aspect-ratio: 16/10;
   // Scale the entire UI based on viewport
   // For 16:10 aspect, we use the smaller of width/height-based scaling
   // Base: 16px at 1920x1200 viewport (16:10)
@@ -40,6 +40,6 @@ button:focus, input:focus {
 }
 
 button:focus-visible {
-  outline: 0.125em solid #00ffff;
-  outline-offset: 0.125em;
+  outline: 0.125rem solid #00ffff;
+  outline-offset: 0.125rem;
 }
