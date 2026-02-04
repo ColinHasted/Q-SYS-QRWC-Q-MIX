@@ -2,19 +2,16 @@
   <div class="control-pane__header">OUT</div>
   <div class="control-pane__content">
     <div class="out-column">
-      <div class="knob-group">
-        <div class="knob-wrapper">
-          <app-rotary-knob
-            [value]="delayMs()"
-            [min]="0"
-            [max]="500"
-            [step]="1"
-            (valueChange)="onDelayChange($event)"
-          />
-        </div>
-        <label>DELAY</label>
-      </div>
-      <div class="value-display">{{ delayMs() }}ms</div>
+      <app-gauge-knob
+        [value]="delayMs()"
+        [min]="0"
+        [max]="500"
+        [step]="1"
+        label="DELAY"
+        unit="ms"
+        [showSign]="false"
+        (valueChange)="onDelayChange($event)"
+      />
     </div>
   </div>
   <div class="control-pane__footer">

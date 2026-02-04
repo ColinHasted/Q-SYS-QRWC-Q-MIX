@@ -69,7 +69,7 @@
         (bandChange)="updateEQBand($event.index, $event.property, $event.value)"
       />
 
-      <!-- LIMITER Section -->
+      <!-- LIMITER SECTION REMOVED FOR 
       <app-mixer-limiter
         [on]="channelStrip().limiterOn"
         [threshold]="channelStrip().limiterThreshold"
@@ -82,7 +82,7 @@
         (releaseChange)="updateStripValue('limiterRelease', $event)"
         (ceilingChange)="updateStripValue('limiterCeiling', $event)"
       />
-
+ LIMITER Section -->
       <!-- OUT Section -->
       <app-mixer-output
         [delayOn]="channelStrip().delayOn"

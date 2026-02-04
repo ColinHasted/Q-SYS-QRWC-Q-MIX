@@ -1,10 +1,10 @@
 import { Component, input, output } from '@angular/core';
-import { RotaryKnobComponent } from '../shared/rotary-knob/rotary-knob.component';
+import { GaugeKnobComponent } from '../shared/gauge-knob/gauge-knob.component';
 
 @Component({
   selector: 'app-mixer-hpf',
   standalone: true,
-  imports: [RotaryKnobComponent],
+  imports: [GaugeKnobComponent],
   templateUrl: './mixer-hpf.component.html',
   styleUrls: ['./mixer-hpf.component.scss']
 })

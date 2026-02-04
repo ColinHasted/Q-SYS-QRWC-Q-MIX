@@ -18,16 +18,14 @@
           </div>
 
           <!-- Gain Knob -->
-          <div class="aux-master-column__knob">
-            <app-rotary-knob
-              [value]="aux.gain"
-              [min]="-60"
-              [max]="10"
-              [step]="0.5"
-              size="small"
-              (valueChange)="onGainChange($index, $event)"
-            />
-          </div>
+          <app-scale-knob
+            [value]="aux.gain"
+            [min]="-60"
+            [max]="10"
+            [step]="0.5"
+            size="small"
+            (valueChange)="onGainChange($index, $event)"
+          />
 
           <!-- Mute Button -->
           <button class="aux-master-column__mute" 

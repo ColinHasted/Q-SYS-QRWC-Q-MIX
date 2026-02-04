@@ -1,0 +1,49 @@
+<!-- Label at top -->
+@if (label()) {
+  <div class="pan-knob__label">{{ label() }}</div>
+}
+
+<div class="pan-knob"
+     [class.pan-knob--small]="size() === 'small'"
+     [class.pan-knob--large]="size() === 'large'">
+  
+  <!-- SVG Gauge Arc (surrounds the knob) -->
+  <svg class="pan-knob__gauge" viewBox="0 0 100 100">
+    <!-- Background arc (dark track) -->
+    <path class="pan-knob__gauge-bg"
+          [attr.d]="gaugeBackgroundPath"
+          fill="none"
+          stroke-width="5"
+          stroke-linecap="round"/>
+    <!-- Active arc (lit portion) -->
+    <path class="pan-knob__gauge-fill"
+          [attr.d]="gaugeArcPath"
+          fill="none"
+          stroke-width="5"
+          stroke-linecap="round"/>
+  </svg>
+
+  <!-- Knob Body with Ridges -->
+  <div class="pan-knob__body"
+       #knobElement
+       (mousedown)="onMouseDown($event)"
+       (touchstart)="onTouchStart($event)">
+    
+    <!-- Ridged surface texture -->
+    <div class="pan-knob__ridges">
+      @for (i of ridgeIndices; track i) {
+        <div class="pan-knob__ridge" [style.--ridge-angle]="(i / ridgeCount) * 360 + 'deg'"></div>
+      }
+    </div>
+    
+    <!-- Rotating indicator -->
+    <div class="pan-knob__rotate" [style.transform]="rotationTransform">
+      <div class="pan-knob__indicator"></div>
+    </div>
+  </div>
+
+  <!-- Value Display Box -->
+  <div class="pan-knob__value-box">
+    {{ formattedValue }}
+  </div>
+</div>

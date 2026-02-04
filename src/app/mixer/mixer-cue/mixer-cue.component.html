@@ -26,17 +26,16 @@
 
       <!-- Gain Knob -->
       <div class="cue-controls">
-        <div class="knob-group">
-          <label>GAIN</label>
-          <app-rotary-knob
-            [value]="gain()"
-            [min]="-20"
-            [max]="10"
-            [step]="0.5"
-            (valueChange)="onGainChange($event)"
-          />
-          <div class="value-display">{{ formatGain(gain()) }}dB</div>
-        </div>
+        <app-gauge-knob
+          [value]="gain()"
+          [min]="-20"
+          [max]="10"
+          [step]="0.5"
+          label="GAIN"
+          unit="dB"
+          [showSign]="true"
+          (valueChange)="onGainChange($event)"
+        />
       </div>
     </div>
   </div>

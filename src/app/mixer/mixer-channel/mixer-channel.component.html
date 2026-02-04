@@ -3,15 +3,14 @@
 
       <!-- Pan Knob -->
       <div class="mixer-channel__pan">
-        <app-rotary-knob
+        <app-pan-knob
           [value]="channel().pan"
           [min]="-100"
           [max]="100"
           [step]="1"
-          size="small"
+          size="large"
           (valueChange)="onPanChange($event)"
-        ></app-rotary-knob>
-        <span class="mixer-channel__pan-label">{{ formatPan(channel().pan) }}</span>
+        ></app-pan-knob>
       </div>
 
       <!-- ON Button -->

@@ -1,0 +1,47 @@
+<!-- Label at top -->
+@if (label()) {
+  <div class="scale-knob__label">{{ label() }}</div>
+}
+
+<div class="scale-knob"
+     [class.scale-knob--small]="size() === 'small'"
+     [class.scale-knob--large]="size() === 'large'">
+  
+  <!-- SVG Scale (tick marks and labels only) -->
+  <svg class="scale-knob__gauge" viewBox="0 0 100 100">
+    <!-- Scale tick marks and labels -->
+    @for (mark of scaleMarks; track mark.value) {
+      <!-- Tick mark -->
+      <line class="scale-knob__tick"
+            [attr.x1]="getTickPosition(mark.angle).x1"
+            [attr.y1]="getTickPosition(mark.angle).y1"
+            [attr.x2]="getTickPosition(mark.angle).x2"
+            [attr.y2]="getTickPosition(mark.angle).y2"/>
+      <!-- Label -->
+      <text class="scale-knob__scale-label"
+            [attr.x]="getLabelPosition(mark.angle).x"
+            [attr.y]="getLabelPosition(mark.angle).y"
+            text-anchor="middle"
+            dominant-baseline="middle">{{ mark.label }}</text>
+    }
+  </svg>
+
+  <!-- Knob Body with Ridges -->
+  <div class="scale-knob__body"
+       #knobElement
+       (mousedown)="onMouseDown($event)"
+       (touchstart)="onTouchStart($event)">
+    
+    <!-- Ridged surface texture -->
+    <div class="scale-knob__ridges">
+      @for (i of ridgeIndices; track i) {
+        <div class="scale-knob__ridge" [style.--ridge-angle]="(i / ridgeCount) * 360 + 'deg'"></div>
+      }
+    </div>
+    
+    <!-- Rotating indicator -->
+    <div class="scale-knob__rotate" [style.transform]="rotationTransform">
+      <div class="scale-knob__indicator"></div>
+    </div>
+  </div>
+</div>

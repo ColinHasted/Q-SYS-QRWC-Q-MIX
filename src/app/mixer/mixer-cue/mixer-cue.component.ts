@@ -1,10 +1,10 @@
 import { Component, input, output, computed } from '@angular/core';
-import { RotaryKnobComponent } from '../shared/rotary-knob/rotary-knob.component';
+import { GaugeKnobComponent } from '../shared/gauge-knob/gauge-knob.component';
 
 @Component({
   selector: 'app-mixer-cue',
   standalone: true,
-  imports: [RotaryKnobComponent],
+  imports: [GaugeKnobComponent],
   templateUrl: './mixer-cue.component.html',
   styleUrls: ['./mixer-cue.component.scss']
 })

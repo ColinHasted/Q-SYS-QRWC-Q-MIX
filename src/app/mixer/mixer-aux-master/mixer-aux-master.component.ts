@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { RotaryKnobComponent } from '../shared/rotary-knob/rotary-knob.component';
+import { ScaleKnobComponent } from '../shared/scale-knob/scale-knob.component';
 
 export interface AuxMaster {
   gain: number;
@@ -11,7 +11,7 @@ export interface AuxMaster {
 @Component({
   selector: 'app-mixer-aux-master',
   standalone: true,
-  imports: [RotaryKnobComponent],
+  imports: [ScaleKnobComponent],
   templateUrl: './mixer-aux-master.component.html',
   styleUrls: ['./mixer-aux-master.component.scss']
 })

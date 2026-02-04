@@ -21,7 +21,7 @@ import { MixerAuxMasterComponent, AuxMaster } from './mixer-aux-master/mixer-aux
     MixerGateComponent,
     MixerCompressorComponent,
     MixerEqualizerComponent,
-    MixerLimiterComponent,
+   // MixerLimiterComponent,
     MixerOutputComponent,
     MixerAuxSendsComponent,
     MixerChannelComponent,

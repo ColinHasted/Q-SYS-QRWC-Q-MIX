@@ -2,95 +2,81 @@
   <div class="control-pane__header">COMP</div>
   <div class="control-pane__content">
     <div class="knob-row">
-      <div class="knob-group">
-        <div class="knob-wrapper">
-          <app-rotary-knob
-            [value]="attack()"
-            [min]="0.1"
-            [max]="100"
-            [step]="0.1"
-            size="small"
-            (valueChange)="onAttackChange($event)"
-          />
-        </div>
-        <label>ATTACK</label>
-      </div>
-      <div class="knob-group">
-        <div class="knob-wrapper">
-          <app-rotary-knob
-            [value]="release()"
-            [min]="10"
-            [max]="1000"
-            [step]="1"
-            size="small"
-            (valueChange)="onReleaseChange($event)"
-          />
-        </div>
-        <label>RELEASE</label>
-      </div>
-      <div class="knob-group">
-        <div class="knob-wrapper">
-          <app-rotary-knob
-            [value]="depth()"
-            [min]="0"
-            [max]="100"
-            [step]="1"
-            size="small"
-            (valueChange)="onDepthChange($event)"
-          />
-        </div>
-        <label>DEPTH</label>
-      </div>
+      <app-gauge-knob
+        [value]="attack()"
+        [min]="0.1"
+        [max]="100"
+        [step]="0.1"
+        size="small"
+        label="ATTACK"
+        unit="ms"
+        [showSign]="false"
+        (valueChange)="onAttackChange($event)"
+      />
+      <app-gauge-knob
+        [value]="release()"
+        [min]="10"
+        [max]="1000"
+        [step]="1"
+        size="small"
+        label="RELEASE"
+        unit="ms"
+        [showSign]="false"
+        (valueChange)="onReleaseChange($event)"
+      />
+      <app-gauge-knob
+        [value]="depth()"
+        [min]="0"
+        [max]="100"
+        [step]="1"
+        size="small"
+        label="DEPTH"
+        unit="%"
+        [showSign]="false"
+        (valueChange)="onDepthChange($event)"
+      />
     </div>
     <div class="knob-row">
-      <div class="knob-group">
-        <div class="knob-wrapper">
-          <app-rotary-knob
-            [value]="threshold()"
-            [min]="-60"
-            [max]="0"
-            [step]="1"
-            (valueChange)="onThresholdChange($event)"
-          />
-        </div>
-        <label>THRESHOLD</label>
-      </div>
-      <div class="knob-group">
-        <div class="knob-wrapper">
-          <app-rotary-knob
-            [value]="ratio()"
-            [min]="1"
-            [max]="20"
-            [step]="0.5"
-            (valueChange)="onRatioChange($event)"
-          />
-        </div>
-        <label>RATIO</label>
-      </div>
-      <div class="knob-group">
-        <div class="knob-wrapper">
-          <app-rotary-knob
-            [value]="knee()"
-            [min]="0"
-            [max]="20"
-            [step]="0.5"
-            (valueChange)="onKneeChange($event)"
-          />
-        </div>
-        <label>KNEE</label>
-      </div>
-      <div class="knob-group">
-        <div class="knob-wrapper">
-          <app-rotary-knob
-            [value]="makeup()"
-            [min]="0"
-            [max]="24"
-            [step]="0.5"
-            (valueChange)="onMakeupChange($event)"
-          />
-        </div>
-        <label>GAIN</label>
-      </div>
+      <app-gauge-knob
+        [value]="threshold()"
+        [min]="-60"
+        [max]="0"
+        [step]="1"
+        label="THRESHOLD"
+        unit="dB"
+        [showSign]="true"
+        (valueChange)="onThresholdChange($event)"
+      />
+      <app-gauge-knob
+        [value]="ratio()"
+        [min]="1"
+        [max]="20"
+        [step]="0.5"
+        label="RATIO"
+        unit=":1"
+        [showSign]="false"
+        (valueChange)="onRatioChange($event)"
+      />
+      <app-gauge-knob
+        [value]="knee()"
+        [min]="0"
+        [max]="20"
+        [step]="0.5"
+        label="KNEE"
+        unit="dB"
+        [showSign]="false"
+        (valueChange)="onKneeChange($event)"
+      />
+      <app-gauge-knob
+        [value]="makeup()"
+        [min]="0"
+        [max]="24"
+        [step]="0.5"
+        label="GAIN"
+        unit="dB"
+        [showSign]="true"
+        (valueChange)="onMakeupChange($event)"
+      />
     </div>
     <div class="curve-display">
       <canvas #curveCanvas></canvas>

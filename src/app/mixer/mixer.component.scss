@@ -8,7 +8,7 @@
   @include metallic-surface;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 95vh;
   font-family: 'Segoe UI', 'Roboto', sans-serif;
   color: #cde;
 
@@ -26,7 +26,7 @@
 
   &__top {
     flex: 0 0 auto;
-    height: 45vh;
+    height: 38vh;
     padding: 0.75em;
     border-bottom: 0.1875em solid #0a1520;
     box-shadow: 0 0.25em 0.75em rgba(0, 0, 0, 0.5);
@@ -38,10 +38,11 @@
 
   &__bottom {
     flex: 1;
-    padding: 0.5em 0.75em;
+    padding: 0.5em 0.75em 0.75em 0.75em;
     display: flex;
     align-items: stretch;
     min-height: 0;
+    position: relative;
   }
 }
 
@@ -93,7 +94,7 @@
   flex-direction: column;
   justify-content: space-between;
   padding: 0.25em 0;
-  height: 20em;
+  height: 15em;
 }
 
 .fader-scale-left {
@@ -143,9 +144,9 @@
 
 
 .branding {
-  position: fixed;
-  bottom: 1.25em;
-  right: 1.875em;
+  position: absolute;
+  bottom: 2rem;
+  right: 2.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -191,7 +192,13 @@
   display: flex;
   flex-direction: column;
   flex: 0 0 auto;
-  height: 20rem;
+  height: 15rem;
+  position: relative;
+
+  .fader-scale-left,
+  .fader-scale-right {
+    height: 15em;
+  }
 }
 
 // Channel strip (for master channel)
@@ -318,18 +325,18 @@
     margin-bottom: 0;
 
     .fader {
-      height: 20em;
+      height: 15em;
     }
   }
 }
 
 // Master fader input
 .fader {
-  -webkit-appearance: slider-vertical;
-  appearance: slider-vertical;
+  -webkit-appearance: none;
+  appearance: none;
   writing-mode: vertical-lr;
   direction: rtl;
-  width: 1.875em;
+  width: 1.5em;
   height: 100%;
   min-height: 3em;
   background: linear-gradient(90deg,
@@ -349,8 +356,8 @@
 
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 1.5rem;
-    height: 1rem;
+    width: 1.75rem;
+    height: 1.125rem;
     border: 0.0312rem solid rgba(0, 0, 0, 0.55);
     border-radius: 0.25rem;
     box-shadow:
@@ -386,21 +393,22 @@
   }
 
   &::-moz-range-thumb {
-    width: 2.375em;
-    height: 1.75em;
-    background: linear-gradient(180deg, #8ab 0%, #5a7a9a 15%, #3a5a7a 50%, #5a7a9a 85%, #8ab 100%);
-    border-radius: 0.1875em;
+    width: 1.75rem;
+    height: 1.125rem;
+    background:
+      linear-gradient(to right,
+        transparent calc(50% - 0.03125rem),
+        rgba(0, 0, 0, 0.45) calc(50% - 0.03125rem) calc(50% + 0.03125rem),
+        transparent calc(50% + 0.03125rem)),
+      linear-gradient(to right, #8d949b, #a9b0b7 25%, #cfd4d9 55%, #a9b0b7 85%, #8d949b),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.85), transparent 8% 92%, rgba(0, 0, 0, 0.25));
+    border-radius: 0.25rem;
     cursor: grab;
-    border: 0.0625em solid #9bc;
+    border: 0.0312rem solid rgba(0, 0, 0, 0.55);
   }
 
   &.master-fader {
-    width: 3.125em;
-
-    &::-webkit-slider-thumb {
-      width: 2rem;
-      height: 1.5rem;
-    }
+    width: 2em;
   }
 }
 

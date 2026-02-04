@@ -5,10 +5,16 @@
             @for (send of auxSends(); track $index) {
             <div class="aux-item">
                 <label>AUX {{ $index + 1 }}</label>
-                <div class="knob-wrapper small">
-                    <app-rotary-knob [value]="send" [min]="-60" [max]="10" [step]="1" size="small"
-                        (valueChange)="onAuxSendChange($index, $event)"></app-rotary-knob>
-                </div>
+                <app-gauge-knob
+                  [value]="send"
+                  [min]="-60"
+                  [max]="10"
+                  [step]="1"
+                  size="small"
+                  unit="dB"
+                  [showSign]="true"
+                  (valueChange)="onAuxSendChange($index, $event)"
+                />
             </div>
             }
         </div>

@@ -1,4 +1,6 @@
 @use 'control_panes' as *;
+@use 'sass:color';
+@use 'variables' as *;
 
 :host {
   display: contents;
@@ -14,18 +16,28 @@
   min-height: 0;
   overflow: hidden;
 
-  // Display wrapper - takes remaining space after bands
+  // Top section containing band selectors and display
+  &__top-section {
+    display: flex;
+    gap: 0.5em;
+    flex: 1;
+    min-height: 0;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // Display wrapper - centered with flex
   &__display-wrapper {
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 0;
-    max-height: 12em;
     overflow: hidden;
+    max-width: 80%;
   }
 
-  // 16:9 EQ display - constrained by wrapper
+  // 16:9 EQ display
   &__display {
     max-width: 100%;
     max-height: 100%;
@@ -65,86 +77,128 @@
     }
   }
 
-  // All 6 bands in a row - fixed height
-  &__bands {
-    display: flex;
-    gap: 0;
-    flex-shrink: 0;
-    height: 13em;
-  }
-
-  // Individual band column - compact
-  &__band {
-    flex: 1 1 0;
+  // Band selector buttons (1-6) - vertical column
+  &__band-selectors {
     display: flex;
     flex-direction: column;
-    align-items: stretch;
-    justify-content: space-between;
     gap: 0.25em;
-    padding: 0.25em;
-    border-right: 1px solid rgba(230, 230, 230, 0.15);
-    min-width: 0;
-    min-height: 0;
+    justify-content: center;
+    align-items: stretch;
+    flex-shrink: 0;
+  }
 
-    &:last-child {
-      border-right: none;
-    }
+  &__band-label {
+    font-size: 0.45em;
+    font-weight: 600;
+    color: rgba(200, 200, 200, 0.9);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-align: center;
+    margin-bottom: 0.25em;
+  }
+
+  &__band-btn {
+    width: 2.5em;
+    height: 2.25em;
+    border-radius: 0.25em;
+    border: 0.0625em solid rgba(0, 0, 0, 0.5);
+    background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 50%, #1a1a1a 100%);
+    color: #888;
+    font-size: 0.75em;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.4), inset 0 0.0625em 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.15s;
 
     &:hover {
-      background: rgba(0, 200, 255, 0.05);
+      background: linear-gradient(180deg, #4a4a4a 0%, #3a3a3a 50%, #2a2a2a 100%);
     }
 
+    // Different colored glow for each band
     &--active {
-      background: rgba(255, 100, 100, 0.1);
-
-      .equalizer__band-header {
+      font-weight: bold;
+      box-shadow: 0 0 0.75em currentColor;
+      
+      &[data-band=\"0\"] {
+        // Band 1 - Red
         color: #ff6666;
+        text-shadow: 0 0 0.5em rgba(#ff6666, 0.8);
+        background: linear-gradient(180deg, color.adjust(#ff6666, $lightness: -35%) 0%, color.adjust(#ff6666, $lightness: -45%) 50%, color.adjust(#ff6666, $lightness: -50%) 100%);
+        border-color: #ff6666;
+      }
+
+      &[data-band=\"1\"] {
+        // Band 2 - Orange
+        color: $glow-orange;
+        text-shadow: 0 0 0.5em rgba($glow-orange, 0.8);
+        background: linear-gradient(180deg, color.adjust($glow-orange, $lightness: -35%) 0%, color.adjust($glow-orange, $lightness: -45%) 50%, color.adjust($glow-orange, $lightness: -50%) 100%);
+        border-color: $glow-orange;
+      }
+
+      &[data-band=\"2\"] {
+        // Band 3 - Yellow
+        color: $glow-yellow;
+        text-shadow: 0 0 0.5em rgba($glow-yellow, 0.8);
+        background: linear-gradient(180deg, color.adjust($glow-yellow, $lightness: -35%) 0%, color.adjust($glow-yellow, $lightness: -45%) 50%, color.adjust($glow-yellow, $lightness: -50%) 100%);
+        border-color: $glow-yellow;
+      }
+
+      &[data-band=\"3\"] {
+        // Band 4 - Green
+        color: $glow-green;
+        text-shadow: 0 0 0.5em rgba($glow-green, 0.8);
+        background: linear-gradient(180deg, color.adjust($glow-green, $lightness: -35%) 0%, color.adjust($glow-green, $lightness: -45%) 50%, color.adjust($glow-green, $lightness: -50%) 100%);
+        border-color: $glow-green;
+      }
+
+      &[data-band=\"4\"] {
+        // Band 5 - Cyan
+        color: $glow-cyan;
+        text-shadow: 0 0 0.5em rgba($glow-cyan, 0.8);
+        background: linear-gradient(180deg, color.adjust($glow-cyan, $lightness: -35%) 0%, color.adjust($glow-cyan, $lightness: -45%) 50%, color.adjust($glow-cyan, $lightness: -50%) 100%);
+        border-color: $glow-cyan;
+      }
+
+      &[data-band=\"5\"] {
+        // Band 6 - Purple
+        color: #bb66ff;
+        text-shadow: 0 0 0.5em rgba(#bb66ff, 0.8);
+        background: linear-gradient(180deg, color.adjust(#bb66ff, $lightness: -35%) 0%, color.adjust(#bb66ff, $lightness: -45%) 50%, color.adjust(#bb66ff, $lightness: -50%) 100%);
+        border-color: #bb66ff;
       }
     }
   }
 
-  &__band-header {
-    font-size: 0.5em;
-    font-weight: bold;
-    color: #0cf;
-    line-height: 1;
-    flex-shrink: 0;
-    text-align: center;
-  }
-
-  // Knobs stacked
-  &__band-knobs {
+  // Controls section with knobs
+  &__controls {
     display: flex;
     flex-direction: column;
+    gap: 0.75em;
     align-items: center;
-    gap: 1rem;
+    justify-content: space-evenly;
     flex-shrink: 0;
+    padding: 0.5em 0;
   }
 
-  &__knob-row {
+  &__knobs {
     display: flex;
-    align-items: center;
-    gap: 0.5em;
+    gap: 1em;
+    align-items: flex-end;
   }
 
-  &__knob-label {
-    font-size: 0.35em;
-    color: rgba(255, 255, 255, 0.4);
-    width: 0.75em;
-    text-align: right;
-  }
-
-  // Filter type selector
+  // Filter type selector - horizontal below knobs
   &__filter-selector {
     display: flex;
     gap: 0;
     flex-shrink: 0;
+    flex-direction: row;
+    justify-content: center;
   }
 
   &__filter-btn {
-    flex: 1;
-    height: 1em;
-    padding: 0.125em;
+    width: 2.25em;
+    height: 1.25em;
+    padding: 0.25em;
     border: 1px solid rgba(0, 0, 0, 0.5);
     background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 50%, #1a1a1a 100%);
     color: #888;

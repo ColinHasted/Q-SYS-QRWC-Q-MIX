@@ -12,19 +12,20 @@
         <div class="clip-led" [class.active]="clip()">CLIP</div>
       </div>
       <div class="input-knob-section">
-        <app-rotary-knob
+        <app-gauge-knob
           [value]="gain()"
           [min]="-20"
           [max]="60"
           [step]="1"
+          unit="dB"
+          label="GAIN"
           (valueChange)="onGainChange($event)"
         />
-        <div class="value-display">{{ gain() }}dB</div>
         <div class="button-row">
-          <button class="panel-btn" [class.active]="invert()"
-                  (click)="onInvertToggle()">Ø</button>
           <button class="panel-btn phantom" [class.active]="phantom()"
                   (click)="onPhantomToggle()">48V</button>
+          <button class="panel-btn" [class.active]="invert()"
+                  (click)="onInvertToggle()">Ø</button>
         </div>
       </div>
     </div>

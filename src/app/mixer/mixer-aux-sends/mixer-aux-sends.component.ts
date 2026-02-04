@@ -1,11 +1,10 @@
 import { Component, input, output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { RotaryKnobComponent } from '../shared/rotary-knob/rotary-knob.component';
+import { GaugeKnobComponent } from '../shared/gauge-knob/gauge-knob.component';
 
 @Component({
   selector: 'app-mixer-aux-sends',
   standalone: true,
-  imports: [ RotaryKnobComponent],
+  imports: [GaugeKnobComponent],
   templateUrl: './mixer-aux-sends.component.html',
   styleUrls: ['./mixer-aux-sends.component.scss']
 })
