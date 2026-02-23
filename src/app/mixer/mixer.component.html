@@ -2,199 +2,56 @@
   <!-- Top Section - Channel Strip Processing -->
   <div class="mixer__top">
     <div class="channel-strip">
-      <!-- IN + HPF Section -->
+
+      <!-- IN + HPF — self-wire to the selected channel's mic preamp & HPF -->
       <div class="input-stack">
-        <app-mixer-input
-          [on]="channelStrip().inputOn"
-          [gain]="channelStrip().gain"
-          [invert]="channelStrip().invert"
-          [phantom]="channelStrip().phantom"
-          [vuLevel]="getSelectedChannelVU()"
-          [clip]="getSelectedChannelClip()"
-          (toggle)="toggleStripProp('inputOn')"
-          (gainChange)="updateStripValue('gain', $event)"
-          (invertToggle)="toggleStripProp('invert')"
-          (phantomToggle)="toggleStripProp('phantom')"
-        />
-
-        <app-mixer-hpf
-          [on]="channelStrip().hpfOn"
-          [frequency]="channelStrip().hpfFrequency"
-          (toggle)="toggleStripProp('hpfOn')"
-          (frequencyChange)="updateStripValue('hpfFrequency', $event)"
-        />
+        <app-mixer-input [channel]="selectedChannel()" />
+        <app-mixer-hpf   [channel]="selectedChannel()" />
       </div>
 
-      @if (processingInitialized()) {
-        <!-- GATE Section -->
-        <app-mixer-gate
-          [channel]="selectedChannel()"
-        />
+      <!-- GATE -->
+      <app-mixer-gate [channel]="selectedChannel()" />
 
-        <!-- COMP Section -->
-        <app-mixer-compressor
-          [channel]="selectedChannel()"
-        />
+      <!-- COMPRESSOR -->
+      <app-mixer-compressor [channel]="selectedChannel()" />
 
-        <!-- EQUALISER Section -->
-        <app-mixer-equalizer
-          [channel]="selectedChannel()"
-        />
-      }
+      <!-- EQUALISER -->
+      <app-mixer-equalizer [channel]="selectedChannel()" />
 
-      <!-- LIMITER SECTION REMOVED FOR 
-      <app-mixer-limiter
-        [on]="channelStrip().limiterOn"
-        [threshold]="channelStrip().limiterThreshold"
-        [attack]="channelStrip().limiterAttack"
-        [release]="channelStrip().limiterRelease"
-        [ceiling]="channelStrip().limiterCeiling"
-        (toggle)="toggleStripProp('limiterOn')"
-        (thresholdChange)="updateStripValue('limiterThreshold', $event)"
-        (attackChange)="updateStripValue('limiterAttack', $event)"
-        (releaseChange)="updateStripValue('limiterRelease', $event)"
-        (ceilingChange)="updateStripValue('limiterCeiling', $event)"
-      />
- LIMITER Section -->
-      <!-- OUT Section -->
-      <app-mixer-output
-        [delayOn]="channelStrip().delayOn"
-        [delayMs]="channelStrip().delayMs"
-        (delayToggle)="toggleStripProp('delayOn')"
-        (delayChange)="updateStripValue('delayMs', $event)"
+      <!-- OUTPUT / DELAY -->
+      <app-mixer-output [channel]="selectedChannel()" />
+
+      <!-- AUX SENDS (per-channel crosspoint sends to aux buses 1-4) -->
+      <app-mixer-aux-sends
+        [channel]="selectedChannel()"
+        [mixer]="mixer"
       />
 
-      <!-- AUX SENDS Section -->
-      @if (mixer) {
-        <app-mixer-aux-sends
-          [channel]="selectedChannel()"
-          [mixer]="mixer"
-        />
-      }
-
-      <!-- CUE + AUX MASTER Stack -->
+      <!-- CUE + AUX MASTER -->
       <div class="cue-aux-stack">
-        <app-mixer-cue
-          [on]="cue().on"
-          [gain]="cue().gain"
-          [vuLevelL]="cue().vuLevelL"
-          [vuLevelR]="cue().vuLevelR"
-          [clipL]="cue().clipL"
-          [clipR]="cue().clipR"
-          (toggle)="toggleCue()"
-          (gainChange)="updateCueGain($event)"
-        />
-
-        <app-mixer-aux-master
-          [auxMasters]="auxMasters()"
-          (gainChange)="updateAuxMasterGain($event.index, $event.value)"
-          (muteToggle)="toggleAuxMasterMute($event)"
-        />
+        <app-mixer-cue [mixer]="mixer" />
+        <app-mixer-aux-master [mixer]="mixer" />
       </div>
+
     </div>
   </div>
 
   <!-- Bottom Section - Fader Bank -->
   <div class="mixer__bottom">
     <div class="fader-bank">
-      @for (channel of channels(); track channel.id) {
+
+      @for (channelId of channelIds; track channelId) {
         <app-mixer-channel
-          [channel]="channel"
-          (faderChange)="updateFader(channel.id, $event)"
-          (panChange)="updateChannelPan(channel.id, $event)"
-          (onToggle)="toggleChannelProp(channel.id, 'on')"
-          (soloToggle)="toggleChannelProp(channel.id, 'solo')"
-          (cueToggle)="toggleChannelProp(channel.id, 'cue')"
-          (select)="selectChannel(channel.id)"
+          [channelId]="channelId"
+          [mixer]="mixer"
+          [selectedChannel]="selectedChannel()"
+          (select)="selectChannel(channelId)"
         />
       }
 
-      <!-- Master Fader Section -->
-      <div class="master-section">
-        <div class="channel master">
-          <div class="channel-label master-label">MASTER</div>
+      <!-- Master Fader -->
+      <app-mixer-master [mixer]="mixer" />
 
-          <!-- Master VU Meters (Stereo) -->
-          <div class="vu-meter-stereo">
-            <div class="vu-meter master-vu stereo-channel">
-              @for (seg of getVUSegments(master().vuLevelL); track $index) {
-                <div class="vu-segment"
-                     [class.active]="seg"
-                     [class.yellow]="$index >= 8 && $index < 10"
-                     [class.red]="$index >= 10"></div>
-              }
-              <div class="clip-led" [class.active]="master().clipL">L</div>
-            </div>
-            <div class="vu-meter master-vu stereo-channel">
-              @for (seg of getVUSegments(master().vuLevelR); track $index) {
-                <div class="vu-segment"
-                     [class.active]="seg"
-                     [class.yellow]="$index >= 8 && $index < 10"
-                     [class.red]="$index >= 10"></div>
-              }
-              <div class="clip-led" [class.active]="master().clipR">R</div>
-            </div>
-          </div>
-
-
-
-          <!-- Master Buttons -->
-          <div class="channel-buttons">
-            <button class="ch-btn mute" [class.active]="master().mute"
-                    (click)="toggleMasterMute()">MUTE</button>
-            <button class="ch-btn select" [class.active]="master().select"
-                    (click)="toggleMasterSelect()">SEL</button>
-          </div>
-
-          <!-- Master Fader -->
-          <div class="fader-track master-track">
-            <div class="fader-scale-left">
-              <div class="scale-mark major"><span class="tick"></span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark major"><span class="tick"></span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark major"><span class="tick"></span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark major"><span class="tick"></span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark major"><span class="tick"></span></div>
-            </div>
-            
-            <input type="range" class="fader master-fader" min="0" max="100"
-                   [value]="master().faderValue"
-                   (input)="updateMasterFader(+$any($event.target).value)"
-                   orient="vertical">
-            
-            <div class="fader-scale-right">
-              <div class="scale-mark major"><span class="tick"></span><span class="label">10</span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark major"><span class="tick"></span><span class="label">0</span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark major"><span class="tick"></span><span class="label">-10</span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark major"><span class="tick"></span><span class="label">-20</span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark minor"><span class="tick"></span></div>
-              <div class="scale-mark major"><span class="tick"></span><span class="label">-∞</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -207,3 +64,4 @@
     </div>
   </div>
 </div>
+

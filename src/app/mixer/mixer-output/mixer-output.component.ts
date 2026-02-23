@@ -1,5 +1,6 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { GaugeKnobComponent } from '../shared/gauge-knob/gauge-knob.component';
+import { ChannelProcessingService } from '../services/channel-processing.service';
 
 @Component({
   selector: 'app-mixer-output',
@@ -9,17 +10,20 @@ import { GaugeKnobComponent } from '../shared/gauge-knob/gauge-knob.component';
   styleUrls: ['./mixer-output.component.scss']
 })
 export class MixerOutputComponent {
-  delayOn = input.required<boolean>();
-  delayMs = input.required<number>();
+  private readonly channelProcessing = inject(ChannelProcessingService);
 
-  delayToggle = output<void>();
-  delayChange = output<number>();
+  channel = input.required<number>();
+
+  // delayOn = tap 1 is NOT bypassed
+  delayOn = computed(() => !this.channelProcessing.getDelay(this.channel()).tap1Bypass());
+  delayMs = computed(() => this.channelProcessing.getDelay(this.channel()).delay());
 
   protected onDelayToggle(): void {
-    this.delayToggle.emit();
+    const delay = this.channelProcessing.getDelay(this.channel());
+    delay.SetTap1Bypass(!delay.tap1Bypass());
   }
 
   protected onDelayChange(value: number): void {
-    this.delayChange.emit(value);
+    this.channelProcessing.getDelay(this.channel()).SetDelay(value);
   }
 }

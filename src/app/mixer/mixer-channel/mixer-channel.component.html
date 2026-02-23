@@ -1,23 +1,23 @@
-    <div class="mixer-channel" [class.mixer-channel--selected]="channel().select">
-      <div class="mixer-channel__label">{{ channel().name }}</div>
+    <div class="mixer-channel" [class.mixer-channel--selected]="isSelected()">
+      <div class="mixer-channel__label">{{ label() }}</div>
 
-      <!-- Pan Knob -->
+      <!-- Pan Knob — Q-SYS pan: -1.0 to 1.0 -->
       <div class="mixer-channel__pan">
         <app-pan-knob
-          [value]="channel().pan"
-          [min]="-100"
-          [max]="100"
-          [step]="1"
+          [value]="pan()"
+          [min]="-1"
+          [max]="1"
+          [step]="0.01"
           size="large"
           (valueChange)="onPanChange($event)"
         ></app-pan-knob>
       </div>
 
       <!-- ON Button -->
-      <button class="mixer-channel__button mixer-channel__button--on" [class.mixer-channel__button--active]="channel().on"
+      <button class="mixer-channel__button mixer-channel__button--on" [class.mixer-channel__button--active]="on()"
               (click)="onOnToggle()">ON</button>
 
-      <!-- VU Meter (horizontal) -->
+      <!-- VU Meter (horizontal) — TODO: wire to QrwcMeterComponent -->
       <div class="mixer-channel__meter">
         @for (seg of getVUSegments(); track $index) {
           <div class="mixer-channel__meter-segment"
@@ -25,24 +25,26 @@
                [class.mixer-channel__meter-segment--yellow]="$index >= 8 && $index < 10"
                [class.mixer-channel__meter-segment--red]="$index >= 10"></div>
         }
-        <div class="mixer-channel__clip-led" [class.mixer-channel__clip-led--active]="channel().clip">C</div>
+        <div class="mixer-channel__clip-led" [class.mixer-channel__clip-led--active]="clip()">C</div>
       </div>
 
-      <!-- Solo & Cue on one line -->
+      <!-- Solo & Cue -->
       <div class="mixer-channel__button-row">
-        <button class="mixer-channel__button mixer-channel__button--solo" [class.mixer-channel__button--active]="channel().solo"
+        <button class="mixer-channel__button mixer-channel__button--solo" [class.mixer-channel__button--active]="solo()"
                 (click)="onSoloToggle()">SOLO</button>
-        <button class="mixer-channel__button mixer-channel__button--cue" [class.mixer-channel__button--active]="channel().cue"
+        <button class="mixer-channel__button mixer-channel__button--cue" [class.mixer-channel__button--active]="cueEnable()"
                 (click)="onCueToggle()">CUE</button>
       </div>
 
       <!-- Select Button -->
-      <button class="mixer-channel__button mixer-channel__button--select" [class.mixer-channel__button--active]="channel().select"
+      <button class="mixer-channel__button mixer-channel__button--select" [class.mixer-channel__button--active]="isSelected()"
               (click)="onSelect()">SEL</button>
 
-      <!-- Fader -->
-      <app-fader 
-        [value]="channel().faderValue"
+      <!-- Fader — gain in dB -->
+      <app-fader
+        [value]="gain()"
+        [min]="-100"
+        [max]="10"
         (valueChange)="onFaderChange($event)"
       ></app-fader>
     </div>

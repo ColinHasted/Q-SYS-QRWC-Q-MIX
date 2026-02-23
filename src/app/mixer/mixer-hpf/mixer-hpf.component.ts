@@ -1,5 +1,6 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { GaugeKnobComponent } from '../shared/gauge-knob/gauge-knob.component';
+import { ChannelProcessingService } from '../services/channel-processing.service';
 
 @Component({
   selector: 'app-mixer-hpf',
@@ -9,17 +10,20 @@ import { GaugeKnobComponent } from '../shared/gauge-knob/gauge-knob.component';
   styleUrls: ['./mixer-hpf.component.scss']
 })
 export class MixerHpfComponent {
-  on = input.required<boolean>();
-  frequency = input.required<number>();
+  private readonly channelProcessing = inject(ChannelProcessingService);
 
-  toggle = output<void>();
-  frequencyChange = output<number>();
+  channel = input.required<number>();
+
+  // HPF 'bypass' = !on: bypass=true means the filter is disabled
+  on = computed(() => !this.channelProcessing.getHighPassFilter(this.channel()).bypass());
+  frequency = computed(() => this.channelProcessing.getHighPassFilter(this.channel()).frequency());
 
   protected onToggle(): void {
-    this.toggle.emit();
+    const hpf = this.channelProcessing.getHighPassFilter(this.channel());
+    hpf.SetBypass(!hpf.bypass());
   }
 
   protected onFrequencyChange(value: number): void {
-    this.frequencyChange.emit(value);
+    this.channelProcessing.getHighPassFilter(this.channel()).SetFrequency(value);
   }
 }

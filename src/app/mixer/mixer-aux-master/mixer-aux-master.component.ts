@@ -1,12 +1,9 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { ScaleKnobComponent } from '../shared/scale-knob/scale-knob.component';
+import { QrwcMixerComponent } from '../../../qrwc/components/qrwc-mixer-component';
 
-export interface AuxMaster {
-  gain: number;
-  mute: boolean;
-  vuLevel: number;
-  clip: boolean;
-}
+// Aux send buses map to mixer outputs 1-4
+const AUX_OUTPUTS = [1, 2, 3, 4] as const;
 
 @Component({
   selector: 'app-mixer-aux-master',
@@ -16,25 +13,27 @@ export interface AuxMaster {
   styleUrls: ['./mixer-aux-master.component.scss']
 })
 export class MixerAuxMasterComponent {
-  // Inputs - array of 4 aux masters
-  auxMasters = input<AuxMaster[]>([
-    { gain: 0, mute: false, vuLevel: 0, clip: false },
-    { gain: 0, mute: false, vuLevel: 0, clip: false },
-    { gain: 0, mute: false, vuLevel: 0, clip: false },
-    { gain: 0, mute: false, vuLevel: 0, clip: false }
-  ]);
+  mixer = input.required<QrwcMixerComponent>();
 
-  // Outputs
-  gainChange = output<{ index: number; value: number }>();
-  muteToggle = output<number>();
+  // Derive the 4 aux bus states as a plain-object array so the template
+  // can @for over concrete values. Recomputes whenever any output signal changes.
+  auxBuses = computed(() =>
+    AUX_OUTPUTS.map(output => ({
+      gain: this.mixer().getOutputGain(output)(),
+      mute: this.mixer().getOutputMute(output)(),
+      // VU & clip: TODO — wire to QrwcMeterComponent when available
+      vuLevel: 0,
+      clip: false
+    }))
+  );
 
-  // Methods
-  onGainChange(index: number, value: number): void {
-    this.gainChange.emit({ index, value });
+  onGainChange(busIndex: number, value: number): void {
+    this.mixer().SetOutputGain(AUX_OUTPUTS[busIndex], value);
   }
 
-  onMuteToggle(index: number): void {
-    this.muteToggle.emit(index);
+  onMuteToggle(busIndex: number): void {
+    const out = AUX_OUTPUTS[busIndex];
+    this.mixer().SetOutputMute(out, !this.mixer().getOutputMute(out)());
   }
 
   getVUSegments(level: number): boolean[] {

@@ -9,9 +9,9 @@ import { Component, input, output } from '@angular/core';
 })
 export class FaderComponent {
   value = input.required<number>();
-  min = input<number>(0);
-  max = input<number>(100);
-  
+  min = input<number>(-100);
+  max = input<number>(20);
+  step = input<number | 'any'>('any');
   valueChange = output<number>();
 
   onValueChange(newValue: number): void {

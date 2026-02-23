@@ -1,10 +1,11 @@
-import { Injectable, Signal, computed, inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { QrwcAngularService } from '../../../qrwc/qrwc-angular-service';
 import { QrwcGateComponent } from '../../../qrwc/components/qrwc-gate-component';
 import { QrwcCompressorComponent } from '../../../qrwc/components/qrwc-compressor-component';
 import { QrwcParametricEqualizerComponent } from '../../../qrwc/components/qrwc-parametric-equalizer-component';
 import { QrwcDelayComponent } from '../../../qrwc/components/qrwc-delay-component';
 import { QrwcHighPassFilterComponent } from '../../../qrwc/components/qrwc-high-pass-filter-component';
+import { QrwcMicLineInputComponent } from '../../../qrwc/components/qrwc-mic-line-input-component';
 
 /**
  * Service that manages QRWC component instances for all 16 channels
@@ -18,13 +19,17 @@ export class ChannelProcessingService {
   
   private readonly CHANNEL_COUNT = 16;
   
-  // Arrays to hold QRWC component instances for each channel
+  // Arrays / instances to hold QRWC component instances for each channel
   private _gates: QrwcGateComponent[] = [];
   private _compressors: QrwcCompressorComponent[] = [];
   private _eqs: QrwcParametricEqualizerComponent[] = [];
   private _delays: QrwcDelayComponent[] = [];
   private _highPassFilters: QrwcHighPassFilterComponent[] = [];
-  
+  // 4× 4-channel Mic/Line Input blocks covering channels 1-16
+  // Block 0 → global ch 1-4, block 1 → ch 5-8, block 2 → ch 9-12, block 3 → ch 13-16
+  // TODO: confirm Q-SYS component names (e.g. 'Mic_Line_Input_1' … 'Mic_Line_Input_4')
+  private _micInputs: QrwcMicLineInputComponent[] = [];
+
   private _initialized = false;
 
   /**
@@ -38,6 +43,11 @@ export class ChannelProcessingService {
     }
 
     console.log('Initializing ChannelProcessingService for 16 channels...');
+
+    // 4× 4-channel Mic/Line Input blocks (channels 1-4, 5-8, 9-12, 13-16)
+    for (let block = 0; block < 4; block++) {
+      this._micInputs.push(new QrwcMicLineInputComponent(`Mic_Line_Input_${block + 1}`, 4));
+    }
 
     // Create QRWC component instances for each channel (1-16)
     for (let i = 1; i <= this.CHANNEL_COUNT; i++) {
@@ -59,6 +69,23 @@ export class ChannelProcessingService {
 
     this._initialized = true;
     console.log('ChannelProcessingService initialized successfully');
+  }
+
+  /**
+   * Get the Mic/Line Input block for a global channel number (1-16).
+   * Channels 1-4 → block 0, 5-8 → block 1, 9-12 → block 2, 13-16 → block 3.
+   */
+  getMicInputBlock(channel: number): QrwcMicLineInputComponent {
+    this.validateChannel(channel);
+    return this._micInputs[Math.floor((channel - 1) / 4)];
+  }
+
+  /**
+   * Convert a global channel number (1-16) to the local channel number (1-4)
+   * within its Mic/Line Input block.
+   */
+  getLocalMicChannel(channel: number): number {
+    return ((channel - 1) % 4) + 1;
   }
 
   /**

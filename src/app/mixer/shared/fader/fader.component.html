@@ -41,22 +41,21 @@
     <div class="scale-mark minor"><span class="tick"></span></div>
     <div class="scale-mark minor"><span class="tick"></span></div>
     <div class="scale-mark major"><span class="tick"></span></div>
-    <div class="scale-mark major"><span class="tick"></span></div>
   </div>
   
   <div class="fader-wrapper">
-    <input type="range" class="mixer-fader" [min]="min()" [max]="max()"
+    <input type="range" class="mixer-fader" [min]="min()" [max]="max()" [step]="step()"
            [value]="value()"
            (input)="onValueChange(+$any($event.target).value)"
            >
   </div>
   
   <div class="fader-scale-right">
+    <div class="scale-mark major"><span class="tick"></span><span class="label">20</span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
+    <div class="scale-mark minor"><span class="tick"></span></div>
     <div class="scale-mark major"><span class="tick"></span><span class="label">10</span></div>
-    <div class="scale-mark minor"><span class="tick"></span></div>
-    <div class="scale-mark minor"><span class="tick"></span></div>
-    <div class="scale-mark minor"><span class="tick"></span></div>
-    <div class="scale-mark major"><span class="tick"></span><span class="label">5</span></div>
     <div class="scale-mark minor"><span class="tick"></span></div>
     <div class="scale-mark minor"><span class="tick"></span></div>
     <div class="scale-mark minor"><span class="tick"></span></div>
@@ -92,7 +91,6 @@
     <div class="scale-mark minor"><span class="tick"></span></div>
     <div class="scale-mark minor"><span class="tick"></span></div>
     <div class="scale-mark minor"><span class="tick"></span></div>
-    <div class="scale-mark major"><span class="tick"></span><span class="label">80</span></div>
     <div class="scale-mark major"><span class="tick"></span><span class="label">∞</span></div>
   </div>
 </div>

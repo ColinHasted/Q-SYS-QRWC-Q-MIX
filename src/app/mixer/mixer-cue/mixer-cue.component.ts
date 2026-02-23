@@ -1,5 +1,8 @@
-import { Component, input, output, computed } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { GaugeKnobComponent } from '../shared/gauge-knob/gauge-knob.component';
+import { QrwcMixerComponent } from '../../../qrwc/components/qrwc-mixer-component';
+
+const CUE_BUS = 1;
 
 @Component({
   selector: 'app-mixer-cue',
@@ -9,25 +12,24 @@ import { GaugeKnobComponent } from '../shared/gauge-knob/gauge-knob.component';
   styleUrls: ['./mixer-cue.component.scss']
 })
 export class MixerCueComponent {
-  // Inputs
-  on = input<boolean>(false);
-  gain = input<number>(0);
-  vuLevelL = input<number>(0);
-  vuLevelR = input<number>(0);
-  clipL = input<boolean>(false);
-  clipR = input<boolean>(false);
+  mixer = input.required<QrwcMixerComponent>();
 
-  // Outputs
-  toggle = output<void>();
-  gainChange = output<number>();
+  // 'on' = cue bus is NOT muted
+  on = computed(() => !this.mixer().getCueMute(CUE_BUS)());
+  gain = computed(() => this.mixer().getCueGain(CUE_BUS)());
 
-  // Methods
+  // VU meters: TODO — wire to QrwcMeterComponent when available
+  vuLevelL = computed(() => 0);
+  vuLevelR = computed(() => 0);
+  clipL = computed(() => false);
+  clipR = computed(() => false);
+
   onToggle(): void {
-    this.toggle.emit();
+    this.mixer().SetCueMute(CUE_BUS, this.on()); // on()=true → set muted
   }
 
   onGainChange(value: number): void {
-    this.gainChange.emit(value);
+    this.mixer().SetCueGain(CUE_BUS, value);
   }
 
   getVUSegments(level: number): boolean[] {

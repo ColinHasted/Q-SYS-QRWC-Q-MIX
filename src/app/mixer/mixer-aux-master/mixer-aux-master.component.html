@@ -2,11 +2,11 @@
   <div class="control-pane__header">AUX MASTER</div>
   <div class="control-pane__content">
     <div class="aux-master-grid">
-      @for (aux of auxMasters(); track $index) {
+      @for (aux of auxBuses(); track $index) {
         <div class="aux-master-column">
           <div class="aux-master-column__label">AUX {{ $index + 1 }}</div>
-          
-          <!-- VU Meter -->
+
+          <!-- VU Meter — TODO: wire to QrwcMeterComponent -->
           <div class="aux-master-vu">
             @for (seg of getVUSegments(aux.vuLevel); track $index) {
               <div class="aux-master-vu__segment"
@@ -28,7 +28,7 @@
           />
 
           <!-- Mute Button -->
-          <button class="aux-master-column__mute" 
+          <button class="aux-master-column__mute"
                   [class.aux-master-column__mute--active]="aux.mute"
                   (click)="onMuteToggle($index)">M</button>
         </div>
