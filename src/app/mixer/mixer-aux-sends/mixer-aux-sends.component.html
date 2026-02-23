@@ -2,11 +2,11 @@
     <div class="control-pane__header">AUX SENDS</div>
     <div class="control-pane__content">
         <div class="aux-column">
-            @for (send of auxSends(); track $index) {
+            @for (aux of [0, 1, 2, 3]; track $index) {
             <div class="aux-item">
                 <label>AUX {{ $index + 1 }}</label>
                 <app-gauge-knob
-                  [value]="send"
+                  [value]="getAuxSend($index)"
                   [min]="-60"
                   [max]="10"
                   [step]="1"
@@ -22,7 +22,7 @@
     <div class="control-pane__footer">
         <div class="channel-display">
           <span class="channel-display__label">CH</span>
-          <span class="channel-display__value">{{ selectedChannel() }}</span>
+          <span class="channel-display__value">{{ channel() }}</span>
         </div>
     </div>
 </div>

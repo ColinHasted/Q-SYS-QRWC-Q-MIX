@@ -35,3 +35,4 @@ export { QrwcGateComponent } from './components/qrwc-gate-component';
 export { QrwcMicLineInputComponent, type MicLineInputChannel } from './components/qrwc-mic-line-input-component';
 export { QrwcLineOutputComponent, type LineOutputChannel } from './components/qrwc-line-output-component';
 export { QrwcMixerComponent, type MixerInputChannel, type MixerOutputChannel, type MixerCueBus } from './components/qrwc-mixer-component';
+export { QrwcMixerChannelComponent, type MixerCrosspoint } from './components/qrwc-mixer-channel-component';

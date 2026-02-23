@@ -1,16 +1,19 @@
-import { Component, signal, computed, ViewEncapsulation } from '@angular/core';
-import { Channel, ChannelStrip, MasterChannel, EQBand } from './mixer.interfaces';
+import { Component, signal, computed, ViewEncapsulation, OnInit, inject, effect } from '@angular/core';
+import { Channel, ChannelStrip, MasterChannel } from './mixer.interfaces';
 import { MixerInputComponent } from './mixer-input/mixer-input.component';
 import { MixerHpfComponent } from './mixer-hpf/mixer-hpf.component';
 import { MixerGateComponent } from './mixer-gate/mixer-gate.component';
 import { MixerCompressorComponent } from './mixer-compressor/mixer-compressor.component';
 import { MixerEqualizerComponent } from './mixer-equalizer/mixer-equalizer.component';
-import { MixerLimiterComponent } from './mixer-limiter/mixer-limiter.component';
 import { MixerOutputComponent } from './mixer-output/mixer-output.component';
 import { MixerAuxSendsComponent } from './mixer-aux-sends/mixer-aux-sends.component';
 import { MixerChannelComponent } from './mixer-channel/mixer-channel.component';
 import { MixerCueComponent } from './mixer-cue/mixer-cue.component';
 import { MixerAuxMasterComponent, AuxMaster } from './mixer-aux-master/mixer-aux-master.component';
+import { ChannelProcessingService } from './services/channel-processing.service';
+import { QrwcAngularService } from '../../qrwc/qrwc-angular-service';
+import { QrwcMixerComponent } from '../../qrwc/components/qrwc-mixer-component';
+import { QrwcRouterComponent } from '../../qrwc/components/qrwc-router-component';
 
 @Component({
   selector: 'app-mixer',
@@ -21,7 +24,6 @@ import { MixerAuxMasterComponent, AuxMaster } from './mixer-aux-master/mixer-aux
     MixerGateComponent,
     MixerCompressorComponent,
     MixerEqualizerComponent,
-   // MixerLimiterComponent,
     MixerOutputComponent,
     MixerAuxSendsComponent,
     MixerChannelComponent,
@@ -32,7 +34,50 @@ import { MixerAuxMasterComponent, AuxMaster } from './mixer-aux-master/mixer-aux
   styleUrls: ['./mixer.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class MixerComponent {
+export class MixerComponent implements OnInit {
+  // Inject services
+  private readonly qrwcService = inject(QrwcAngularService);
+  private readonly channelProcessing = inject(ChannelProcessingService);
+
+  // QRWC components (mixer is public so template can access it)
+  mixer?: QrwcMixerComponent;
+  private router?: QrwcRouterComponent;
+
+  // Track initialization state
+  processingInitialized = signal(false);
+
+  constructor() {
+    // Initialize channel processing service as early as possible
+    // This needs to happen before child components try to access it
+    this.channelProcessing.initialize();
+    this.processingInitialized.set(true);
+
+    // Initialize mixer and router QRWC components in constructor (injection context)
+    // Assuming your Q-SYS design has components named "Mixer" and "Router"
+    this.mixer = new QrwcMixerComponent('Mixer');
+    this.router = new QrwcRouterComponent('Router');
+
+    // Sync router selection with channel selection (effect must be in injection context)
+    effect(() => {
+      const selected = this.selectedChannel();
+      if (this.router) {
+        this.router.SetSelector(selected);
+      }
+    });
+
+    // You can also sync router back to UI if needed
+    // effect(() => {
+    //   if (this.router) {
+    //     const routerChannel = this.router.selector();
+    //     this.selectChannel(routerChannel);
+    //   }
+    // });
+  }
+
+  ngOnInit(): void {
+    // Initialization logic that doesn't require injection context
+  }
+
   // Channel faders
   channels = signal<Channel[]>(
     Array.from({ length: 16 }, (_, i) => ({
@@ -93,38 +138,8 @@ export class MixerComponent {
     phantom: false,
     hpfOn: false,
     hpfFrequency: 80,
-    pan: 0,
-    gateOn: false,
-    gateThreshold: -40,
-    gateAttack: 1.5,
-    gateHold: 10,
-    gateRelease: 100,
-    gateRange: -60,
-    compOn: false,
-    compThreshold: -20,
-    compRatio: 4,
-    compKnee: 6,
-    compAttack: 10,
-    compRelease: 100,
-    compDepth: 50,
-    compMakeup: 0,
-    limiterOn: false,
-    limiterThreshold: -6,
-    limiterAttack: 0.5,
-    limiterRelease: 50,
-    limiterCeiling: -0.3,
-    eqOn: false,
-    eqBands: [
-      { frequency: 80, gain: 0, q: 1.0, type: 'lowshelf', filterType: 'lowpass' },
-      { frequency: 500, gain: 0, q: 1.0, type: 'peaking', filterType: 'bandpass' },
-      { frequency: 2000, gain: 0, q: 1.0, type: 'peaking', filterType: 'bandpass' },
-      { frequency: 8000, gain: 0, q: 1.0, type: 'highshelf', filterType: 'highpass' },
-      { frequency: 250, gain: 0, q: 1.0, type: 'peaking', filterType: 'bandpass' },
-      { frequency: 4000, gain: 0, q: 1.0, type: 'peaking', filterType: 'bandpass' }
-    ],
     delayOn: false,
-    delayMs: 0,
-    auxSends: Array(4).fill(-60)
+    delayMs: 0
   });
 
   // Channel methods
@@ -149,10 +164,6 @@ export class MixerComponent {
   // Master methods
   updateMasterFader(value: number): void {
     this.master.update(m => ({ ...m, faderValue: value }));
-  }
-
-  updateMasterPan(value: number): void {
-    this.master.update(m => ({ ...m, pan: value }));
   }
 
   toggleMasterMute(): void {
@@ -193,22 +204,6 @@ export class MixerComponent {
 
   toggleStripProp(prop: keyof ChannelStrip): void {
     this.channelStrip.update(strip => ({ ...strip, [prop]: !strip[prop] }));
-  }
-
-  updateEQBand(index: number, property: keyof EQBand, value: number | string): void {
-    this.channelStrip.update(strip => ({
-      ...strip,
-      eqBands: strip.eqBands.map((band, i) =>
-        i === index ? { ...band, [property]: value } : band
-      )
-    }));
-  }
-
-  updateAuxSend(index: number, value: number): void {
-    this.channelStrip.update(strip => ({
-      ...strip,
-      auxSends: strip.auxSends.map((send, i) => i === index ? value : send)
-    }));
   }
 
   // Cue methods

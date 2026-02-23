@@ -4,10 +4,10 @@
   <div class="equalizer">
     <!-- Top section with band selectors and display -->
     <div class="equalizer__top-section">
-      <!-- Band selector buttons (1-6) vertical -->
+      <!-- Band selector buttons (1-7) vertical -->
       <div class="equalizer__band-selectors">
         <div class="equalizer__band-label">BAND</div>
-        @for (band of bands(); track $index) {
+        @for (band of eqBands(); track $index) {
           <button 
             class="equalizer__band-btn"
             [class.equalizer__band-btn--active]="selectedBand() === $index"
@@ -28,17 +28,17 @@
     <div class="equalizer__controls">
       <div class="equalizer__knobs">
         <app-gauge-knob
-          [value]="currentBand.gain"
+          [value]="currentBand.Gain()"
           [min]="-18"
           [max]="18"
           [step]="0.5"
           size="normal"
           label="GAIN"
           unit="dB"
-          (valueChange)="onBandChange(selectedBand(), 'gain', $event)" />
+          (valueChange)="onGainChange(selectedBand(), $event)" />
         
         <app-gauge-knob
-          [value]="currentBand.frequency"
+          [value]="currentBand.Frequency()"
           [min]="currentBandRange.min"
           [max]="currentBandRange.max"
           [step]="currentBandRange.step"
@@ -46,10 +46,10 @@
           label="FREQ"
           unit="Hz"
           [showSign]="false"
-          (valueChange)="onBandChange(selectedBand(), 'frequency', $event)" />
+          (valueChange)="onFrequencyChange(selectedBand(), $event)" />
         
         <app-gauge-knob
-          [value]="currentBand.q"
+          [value]="currentBand.Q()"
           [min]="0.1"
           [max]="10"
           [step]="0.1"
@@ -57,32 +57,13 @@
           label="Q"
           unit=""
           [showSign]="false"
-          (valueChange)="onBandChange(selectedBand(), 'q', $event)" />
+          (valueChange)="onQChange(selectedBand(), $event)" />
       </div>
-    </div>
-
-    <!-- Filter type selector - horizontal below knobs -->
-    <div class="equalizer__filter-selector">
-      <button class="equalizer__filter-btn equalizer__filter-btn--first"
-              [class.equalizer__filter-btn--active]="currentBand.filterType === 'lowpass'"
-              (click)="onBandChange(selectedBand(), 'filterType', 'lowpass')">
-        <img src="icons/filters/low-shelf.svg" alt="Low Shelf">
-      </button>
-      <button class="equalizer__filter-btn equalizer__filter-btn--middle"
-              [class.equalizer__filter-btn--active]="currentBand.filterType === 'bandpass'"
-              (click)="onBandChange(selectedBand(), 'filterType', 'bandpass')">
-        <img src="icons/filters/bell.svg" alt="Band Pass">
-      </button>
-      <button class="equalizer__filter-btn equalizer__filter-btn--last"
-              [class.equalizer__filter-btn--active]="currentBand.filterType === 'highpass'"
-              (click)="onBandChange(selectedBand(), 'filterType', 'highpass')">
-        <img src="icons/filters/high-shelf.svg" alt="High Shelf">
-      </button>
     </div>
   </div>
 
   <div class="control-pane__footer">
-    <button class="panel-toggle" [class.active]="on()"
+    <button class="panel-toggle" [class.active]="!bypass()"
             (click)="onToggle()">EQ</button>
   </div>
 </div>

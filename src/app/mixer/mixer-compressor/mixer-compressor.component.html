@@ -83,7 +83,7 @@
     </div>
   </div>
   <div class="control-pane__footer">
-    <button class="panel-toggle" [class.active]="on()"
+    <button class="panel-toggle" [class.active]="!bypass()"
             (click)="onToggle()">COMP</button>
   </div>
 </div>

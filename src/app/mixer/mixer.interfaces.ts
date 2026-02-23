@@ -20,46 +20,9 @@ export interface ChannelStrip {
   // HPF
   hpfOn: boolean;
   hpfFrequency: number;
-  // Gate
-  gateOn: boolean;
-  gateThreshold: number;
-  gateAttack: number;
-  gateHold: number;
-  gateRelease: number;
-  gateRange: number;
-  // Compressor
-  compOn: boolean;
-  compThreshold: number;
-  compRatio: number;
-  compKnee: number;
-  compAttack: number;
-  compRelease: number;
-  compDepth: number;
-  compMakeup: number;
-  // Limiter
-  limiterOn: boolean;
-  limiterThreshold: number;
-  limiterAttack: number;
-  limiterRelease: number;
-  limiterCeiling: number;
-  // EQ Bands
-  eqOn: boolean;
-  eqBands: EQBand[];
   // Delay
   delayOn: boolean;
   delayMs: number;
-  // Pan
-  pan: number;
-  // Aux Sends
-  auxSends: number[];
-}
-
-export interface EQBand {
-  frequency: number;
-  gain: number;
-  q: number;
-  type: 'lowshelf' | 'highshelf' | 'peaking';
-  filterType: 'lowpass' | 'bandpass' | 'highpass';
 }
 
 export interface MasterChannel {

@@ -25,49 +25,22 @@
         />
       </div>
 
-      <!-- GATE Section -->
-      <app-mixer-gate
-        [on]="channelStrip().gateOn"
-        [threshold]="channelStrip().gateThreshold"
-        [attack]="channelStrip().gateAttack"
-        [hold]="channelStrip().gateHold"
-        [release]="channelStrip().gateRelease"
-        [range]="channelStrip().gateRange"
-        (toggle)="toggleStripProp('gateOn')"
-        (thresholdChange)="updateStripValue('gateThreshold', $event)"
-        (attackChange)="updateStripValue('gateAttack', $event)"
-        (holdChange)="updateStripValue('gateHold', $event)"
-        (releaseChange)="updateStripValue('gateRelease', $event)"
-        (rangeChange)="updateStripValue('gateRange', $event)"
-      />
+      @if (processingInitialized()) {
+        <!-- GATE Section -->
+        <app-mixer-gate
+          [channel]="selectedChannel()"
+        />
 
-      <!-- COMP Section -->
-      <app-mixer-compressor
-        [on]="channelStrip().compOn"
-        [threshold]="channelStrip().compThreshold"
-        [ratio]="channelStrip().compRatio"
-        [knee]="channelStrip().compKnee"
-        [attack]="channelStrip().compAttack"
-        [release]="channelStrip().compRelease"
-        [depth]="channelStrip().compDepth"
-        [makeup]="channelStrip().compMakeup"
-        (toggle)="toggleStripProp('compOn')"
-        (thresholdChange)="updateStripValue('compThreshold', $event)"
-        (ratioChange)="updateStripValue('compRatio', $event)"
-        (kneeChange)="updateStripValue('compKnee', $event)"
-        (attackChange)="updateStripValue('compAttack', $event)"
-        (releaseChange)="updateStripValue('compRelease', $event)"
-        (depthChange)="updateStripValue('compDepth', $event)"
-        (makeupChange)="updateStripValue('compMakeup', $event)"
-      />
+        <!-- COMP Section -->
+        <app-mixer-compressor
+          [channel]="selectedChannel()"
+        />
 
-      <!-- EQUALISER Section -->
-      <app-mixer-equalizer
-        [on]="channelStrip().eqOn"
-        [bands]="channelStrip().eqBands"
-        (toggle)="toggleStripProp('eqOn')"
-        (bandChange)="updateEQBand($event.index, $event.property, $event.value)"
-      />
+        <!-- EQUALISER Section -->
+        <app-mixer-equalizer
+          [channel]="selectedChannel()"
+        />
+      }
 
       <!-- LIMITER SECTION REMOVED FOR 
       <app-mixer-limiter
@@ -92,12 +65,12 @@
       />
 
       <!-- AUX SENDS Section -->
-      <app-mixer-aux-sends
-        [auxSends]="channelStrip().auxSends"
-                [selectedChannel]="selectedChannel()"
-
-        (auxSendChange)="updateAuxSend($event.index, $event.value)"
-      />
+      @if (mixer) {
+        <app-mixer-aux-sends
+          [channel]="selectedChannel()"
+          [mixer]="mixer"
+        />
+      }
 
       <!-- CUE + AUX MASTER Stack -->
       <div class="cue-aux-stack">

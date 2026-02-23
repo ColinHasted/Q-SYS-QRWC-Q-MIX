@@ -1,5 +1,7 @@
-import { Component, input, output, ViewChild, ElementRef, AfterViewInit, effect } from '@angular/core';
+import { Component, input, output, ViewChild, ElementRef, AfterViewInit, effect, computed, inject } from '@angular/core';
 import { GaugeKnobComponent } from '../shared/gauge-knob/gauge-knob.component';
+import { ChannelProcessingService } from '../services/channel-processing.service';
+import { QrwcCompressorComponent } from '../../../qrwc/components/qrwc-compressor-component';
 
 @Component({
   selector: 'app-mixer-compressor',
@@ -11,23 +13,26 @@ import { GaugeKnobComponent } from '../shared/gauge-knob/gauge-knob.component';
 export class MixerCompressorComponent implements AfterViewInit {
   @ViewChild('curveCanvas') curveCanvas!: ElementRef<HTMLCanvasElement>;
 
-  on = input.required<boolean>();
-  threshold = input.required<number>();
-  ratio = input.required<number>();
-  knee = input.required<number>();
-  attack = input.required<number>();
-  release = input.required<number>();
-  depth = input.required<number>();
-  makeup = input.required<number>();
+  private readonly channelProcessing = inject(ChannelProcessingService);
 
-  toggle = output<void>();
-  thresholdChange = output<number>();
-  ratioChange = output<number>();
-  kneeChange = output<number>();
-  attackChange = output<number>();
-  releaseChange = output<number>();
-  depthChange = output<number>();
-  makeupChange = output<number>();
+  // Input: which channel (1-16) this compressor UI is controlling
+  channel = input.required<number>();
+
+  // Computed: get the QRWC compressor component for the current channel
+  private qrwcCompressor = computed<QrwcCompressorComponent>(() => {
+    return this.channelProcessing.getCompressor(this.channel());
+  });
+
+  // Expose QRWC signals for template binding
+  bypass = computed(() => this.qrwcCompressor().bypass());
+  threshold = computed(() => this.qrwcCompressor().thresholdLevel());
+  ratio = computed(() => this.qrwcCompressor().ratio());
+  knee = computed(() => this.qrwcCompressor().softKnee());
+  attack = computed(() => this.qrwcCompressor().attack());
+  release = computed(() => this.qrwcCompressor().release());
+  depth = computed(() => this.qrwcCompressor().depth());
+  makeup = computed(() => this.qrwcCompressor().outputGain());
+  appliedGain = computed(() => this.qrwcCompressor().appliedGain());
 
   constructor() {
     effect(() => {
@@ -43,35 +48,36 @@ export class MixerCompressorComponent implements AfterViewInit {
   }
 
   protected onToggle(): void {
-    this.toggle.emit();
+    const comp = this.qrwcCompressor();
+    comp.SetBypass(!comp.bypass());
   }
 
   protected onThresholdChange(value: number): void {
-    this.thresholdChange.emit(value);
+    this.qrwcCompressor().SetThresholdLevel(value);
   }
 
   protected onRatioChange(value: number): void {
-    this.ratioChange.emit(value);
+    this.qrwcCompressor().setRatio(value);
   }
 
   protected onKneeChange(value: number): void {
-    this.kneeChange.emit(value);
+    this.qrwcCompressor().SetSoftKnee(value);
   }
 
   protected onAttackChange(value: number): void {
-    this.attackChange.emit(value);
+    this.qrwcCompressor().SetAttack(value);
   }
 
   protected onReleaseChange(value: number): void {
-    this.releaseChange.emit(value);
+    this.qrwcCompressor().SetRelease(value);
   }
 
   protected onDepthChange(value: number): void {
-    this.depthChange.emit(value);
+    this.qrwcCompressor().SetDepth(value);
   }
 
   protected onMakeupChange(value: number): void {
-    this.makeupChange.emit(value);
+    this.qrwcCompressor().SetOutputGain(value);
   }
 
   private drawCurve(): void {

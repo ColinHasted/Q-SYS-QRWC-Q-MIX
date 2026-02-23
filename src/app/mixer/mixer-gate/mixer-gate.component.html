@@ -48,14 +48,14 @@
         (valueChange)="onThresholdChange($event)"
       />
       <app-gauge-knob
-        [value]="range()"
+        [value]="depth()"
         [min]="-80"
         [max]="0"
         [step]="1"
         label="DEPTH"
         unit="dB"
         [showSign]="true"
-        (valueChange)="onRangeChange($event)"
+        (valueChange)="onDepthChange($event)"
       />
     </div>
     <div class="curve-display">
@@ -63,7 +63,7 @@
     </div>
   </div>
   <div class="control-pane__footer">
-    <button class="panel-toggle" [class.active]="on()"
+    <button class="panel-toggle" [class.active]="!bypass()"
             (click)="onToggle()">GATE</button>
   </div>
 </div>

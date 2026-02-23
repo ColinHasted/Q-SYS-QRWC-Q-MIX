@@ -1,5 +1,7 @@
-import { Component, input, output, ViewChild, ElementRef, AfterViewInit, effect } from '@angular/core';
+import { Component, input, output, ViewChild, ElementRef, AfterViewInit, effect, computed, inject, Signal } from '@angular/core';
 import { GaugeKnobComponent } from '../shared/gauge-knob/gauge-knob.component';
+import { ChannelProcessingService } from '../services/channel-processing.service';
+import { QrwcGateComponent } from '../../../qrwc/components/qrwc-gate-component';
 
 @Component({
   selector: 'app-mixer-gate',
@@ -11,23 +13,29 @@ import { GaugeKnobComponent } from '../shared/gauge-knob/gauge-knob.component';
 export class MixerGateComponent implements AfterViewInit {
   @ViewChild('curveCanvas') curveCanvas!: ElementRef<HTMLCanvasElement>;
 
-  on = input.required<boolean>();
-  threshold = input.required<number>();
-  attack = input.required<number>();
-  hold = input.required<number>();
-  release = input.required<number>();
-  range = input.required<number>();
+  private readonly channelProcessing = inject(ChannelProcessingService);
 
-  toggle = output<void>();
-  thresholdChange = output<number>();
-  attackChange = output<number>();
-  holdChange = output<number>();
-  releaseChange = output<number>();
-  rangeChange = output<number>();
+  // Input: which channel (1-16) this gate UI is controlling
+  channel = input.required<number>();
+
+  // Computed: get the QRWC gate component for the current channel
+  private qrwcGate = computed<QrwcGateComponent>(() => {
+    return this.channelProcessing.getGate(this.channel());
+  });
+
+  // Expose QRWC signals for template binding
+  bypass = computed(() => this.qrwcGate().bypass());
+  threshold = computed(() => this.qrwcGate().thresholdLevel());
+  attack = computed(() => this.qrwcGate().attack());
+  hold = computed(() => this.qrwcGate().holdTime());
+  release = computed(() => this.qrwcGate().release());
+  depth = computed(() => this.qrwcGate().depth());
+  detectorLevel = computed(() => this.qrwcGate().detectorLevel());
+  open = computed(() => this.qrwcGate().open());
 
   constructor() {
     effect(() => {
-      const _ = [this.threshold(), this.range()];
+      const _ = [this.threshold(), this.depth()];
       if (this.curveCanvas) {
         this.drawCurve();
       }
@@ -39,27 +47,28 @@ export class MixerGateComponent implements AfterViewInit {
   }
 
   protected onToggle(): void {
-    this.toggle.emit();
+    const gate = this.qrwcGate();
+    gate.SetBypass(!gate.bypass());
   }
 
   protected onThresholdChange(value: number): void {
-    this.thresholdChange.emit(value);
+    this.qrwcGate().SetThresholdLevel(value);
   }
 
   protected onAttackChange(value: number): void {
-    this.attackChange.emit(value);
+    this.qrwcGate().SetAttack(value);
   }
 
   protected onHoldChange(value: number): void {
-    this.holdChange.emit(value);
+    this.qrwcGate().SetHoldTime(value);
   }
 
   protected onReleaseChange(value: number): void {
-    this.releaseChange.emit(value);
+    this.qrwcGate().SetRelease(value);
   }
 
-  protected onRangeChange(value: number): void {
-    this.rangeChange.emit(value);
+  protected onDepthChange(value: number): void {
+    this.qrwcGate().SetDepth(value);
   }
 
   private drawCurve(): void {
@@ -87,18 +96,18 @@ export class MixerGateComponent implements AfterViewInit {
 
     // Draw gate curve
     const thresholdNorm = (this.threshold() + 80) / 80; // -80 to 0 -> 0 to 1
-    const rangeNorm = Math.abs(this.range()) / 80; // 0 to -80 -> 0 to 1
+    const depthNorm = Math.abs(this.depth()) / 80; // 0 to -80 -> 0 to 1
 
     ctx.strokeStyle = '#00ff88';
     ctx.lineWidth = 2;
     ctx.beginPath();
 
-    // Below threshold - reduced by range
+    // Below threshold - reduced by depth
     const threshX = thresholdNorm * width;
-    const rangeY = height - (rangeNorm * height * 0.8);
+    const depthY = height - (depthNorm * height * 0.8);
 
-    ctx.moveTo(0, rangeY);
-    ctx.lineTo(threshX * 0.8, rangeY);
+    ctx.moveTo(0, depthY);
+    ctx.lineTo(threshX * 0.8, depthY);
 
     // Transition zone
     ctx.lineTo(threshX, height * 0.1);
