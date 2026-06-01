@@ -11,18 +11,24 @@ import { CommonModule } from '@angular/common';
 export class ScaleKnobComponent implements OnDestroy {
   @ViewChild('knobElement') knobElement!: ElementRef<HTMLElement>;
 
-  value = input.required<number>();
+  value = input<number>(0);
   min = input<number>(-60);
   max = input<number>(10);
   step = input<number>(0.5);
   size = input<'small' | 'normal' | 'large'>('normal');
   label = input<string>('');
 
+  /** Optional 0-1 position from the processor. When provided, drives the knob
+   *  position directly and emits positionChange instead of valueChange on drag. */
+  position = input<number | undefined>(undefined);
+
   valueChange = output<number>();
+  positionChange = output<number>();
 
   private isDragging = false;
   private startY = 0;
   private startValue = 0;
+  private startPosition = 0;
   private boundMouseMove = this.onMouseMove.bind(this);
   private boundMouseUp = this.onMouseUp.bind(this);
   private boundTouchMove = this.onTouchMove.bind(this);
@@ -36,7 +42,7 @@ export class ScaleKnobComponent implements OnDestroy {
   // Maps to angles around the 270° arc (135° to 405°/45°)
   readonly scaleMarks = [
     { value: -60, label: '∞', angle: 135 },    // Start (bottom-left)
-    { value: -40, label: '40', angle: 163 },   // ~20% 
+    { value: -40, label: '40', angle: 163 },   // ~20%
     { value: -20, label: '20', angle: 201 },   // ~44%
     { value: -10, label: '10', angle: 239 },   // ~71%
     { value: 0, label: '0', angle: 277 },      // ~86% (around 30° from top going CW)
@@ -44,18 +50,17 @@ export class ScaleKnobComponent implements OnDestroy {
   ];
 
   get rotationTransform(): string {
-    const minVal = this.min();
-    const maxVal = this.max();
-    const currentVal = this.value();
-    
-    // Map value to rotation: 135deg to 405deg (270 degree range)
-    const percentage = (currentVal - minVal) / (maxVal - minVal);
+    const pos = this.position();
+    const percentage = pos !== undefined
+      ? Math.max(0, Math.min(1, pos))
+      : (this.value() - this.min()) / (this.max() - this.min());
     const rotation = -135 + (percentage * 270);
-    
     return `rotate(${rotation}deg)`;
   }
 
   get gaugePercentage(): number {
+    const pos = this.position();
+    if (pos !== undefined) return Math.max(0, Math.min(1, pos)) * 100;
     const minVal = this.min();
     const maxVal = this.max();
     const currentVal = this.value();
@@ -65,29 +70,29 @@ export class ScaleKnobComponent implements OnDestroy {
   // SVG arc calculation for the gauge
   get gaugeArcPath(): string {
     const percentage = Math.max(0, Math.min(1, this.gaugePercentage / 100));
-    
+
     if (percentage <= 0.001) {
       return '';
     }
-    
+
     const startAngle = 135;
     const arcSpan = percentage * 270;
     const endAngle = startAngle + arcSpan;
-    
-    const radius = 42;
+
+    const radius = 37;
     const centerX = 50;
     const centerY = 50;
-    
+
     const startRad = (startAngle * Math.PI) / 180;
     const endRad = (endAngle * Math.PI) / 180;
-    
+
     const x1 = centerX + radius * Math.cos(startRad);
     const y1 = centerY + radius * Math.sin(startRad);
     const x2 = centerX + radius * Math.cos(endRad);
     const y2 = centerY + radius * Math.sin(endRad);
-    
+
     const largeArcFlag = arcSpan > 179 ? 1 : 0;
-    
+
     return `M ${x1.toFixed(4)} ${y1.toFixed(4)} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2.toFixed(4)} ${y2.toFixed(4)}`;
   }
 
@@ -95,19 +100,19 @@ export class ScaleKnobComponent implements OnDestroy {
   get gaugeBackgroundPath(): string {
     const startAngle = 135;
     const endAngle = 45;
-    
+
     const radius = 42;
     const centerX = 50;
     const centerY = 50;
-    
+
     const startRad = (startAngle * Math.PI) / 180;
     const endRad = (endAngle * Math.PI) / 180;
-    
+
     const x1 = centerX + radius * Math.cos(startRad);
     const y1 = centerY + radius * Math.sin(startRad);
     const x2 = centerX + radius * Math.cos(endRad);
     const y2 = centerY + radius * Math.sin(endRad);
-    
+
     return `M ${x1} ${y1} A ${radius} ${radius} 0 1 1 ${x2} ${y2}`;
   }
 
@@ -117,9 +122,9 @@ export class ScaleKnobComponent implements OnDestroy {
     const centerY = 50;
     const innerRadius = 40;
     const outerRadius = 44;
-    
+
     const angleRad = (angleDeg * Math.PI) / 180;
-    
+
     return {
       x1: centerX + innerRadius * Math.cos(angleRad),
       y1: centerY + innerRadius * Math.sin(angleRad),
@@ -133,11 +138,11 @@ export class ScaleKnobComponent implements OnDestroy {
     const centerX = 50;
     const centerY = 50;
     const radius = 47;
-    
+
     // Normalize angle to 0-360 for display purposes
     const normalizedAngle = angleDeg > 360 ? angleDeg - 360 : angleDeg;
     const angleRad = (normalizedAngle * Math.PI) / 180;
-    
+
     return {
       x: centerX + radius * Math.cos(angleRad),
       y: centerY + radius * Math.sin(angleRad)
@@ -167,6 +172,7 @@ export class ScaleKnobComponent implements OnDestroy {
     this.isDragging = true;
     this.startY = clientY;
     this.startValue = this.value();
+    this.startPosition = this.position() ?? 0;
   }
 
   private onMouseMove(event: MouseEvent): void {
@@ -183,17 +189,27 @@ export class ScaleKnobComponent implements OnDestroy {
 
   private updateValue(clientY: number): void {
     const deltaY = this.startY - clientY;
-    const range = this.max() - this.min();
-    const sensitivity = range / 150;
-    
-    let newValue = this.startValue + (deltaY * sensitivity);
-    
-    const stepVal = this.step();
-    newValue = Math.round(newValue / stepVal) * stepVal;
-    newValue = Math.max(this.min(), Math.min(this.max(), newValue));
-    
-    if (newValue !== this.value()) {
-      this.valueChange.emit(newValue);
+    const pos = this.position();
+
+    if (pos !== undefined) {
+      // Position mode: work in 0-1 space, let the processor handle scaling
+      const sensitivity = 1 / 150;
+      let newPosition = this.startPosition + (deltaY * sensitivity);
+      newPosition = Math.max(0, Math.min(1, newPosition));
+      if (newPosition !== pos) {
+        this.positionChange.emit(newPosition);
+      }
+    } else {
+      // Value mode: existing behaviour
+      const range = this.max() - this.min();
+      const sensitivity = range / 150;
+      let newValue = this.startValue + (deltaY * sensitivity);
+      const stepVal = this.step();
+      newValue = Math.round(newValue / stepVal) * stepVal;
+      newValue = Math.max(this.min(), Math.min(this.max(), newValue));
+      if (newValue !== this.value()) {
+        this.valueChange.emit(newValue);
+      }
     }
   }
 

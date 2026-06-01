@@ -1,4 +1,4 @@
-<div class="control-pane control-pane--in">
+<div class="control-pane control-pane--in" [class.is-disabled]="disabled()">
   <div class="control-pane__header">IN</div>
   <div class="control-pane__content">
     <div class="input-main">
@@ -13,13 +13,10 @@
       </div>
       <div class="input-knob-section">
         <app-gauge-knob
-          [value]="gain()"
-          [min]="-20"
-          [max]="60"
-          [step]="1"
-          unit="dB"
+          [position]="gainPosition()"
+          [displayValue]="gainDisplay()"
           label="GAIN"
-          (valueChange)="onGainChange($event)"
+          (positionChange)="onGainPositionChange($event)"
         />
         <div class="button-row">
           <button class="panel-btn phantom" [class.active]="phantom()"

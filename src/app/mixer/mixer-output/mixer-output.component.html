@@ -1,16 +1,13 @@
-<div class="control-pane control-pane--out">
+<div class="control-pane control-pane--out" [class.is-disabled]="disabled()">
   <div class="control-pane__header">OUT</div>
   <div class="control-pane__content">
     <div class="out-column">
       <app-gauge-knob
-        [value]="delayMs()"
-        [min]="0"
-        [max]="500"
-        [step]="1"
+        [position]="delayPos()"
+        [displayValue]="delayStr()"
         label="DELAY"
-        unit="ms"
         [showSign]="false"
-        (valueChange)="onDelayChange($event)"
+        (positionChange)="onDelayChange($event)"
       />
     </div>
   </div>

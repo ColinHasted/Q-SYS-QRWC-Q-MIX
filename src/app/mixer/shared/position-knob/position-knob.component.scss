@@ -1,0 +1,141 @@
+@use '../../../scss/variables' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25em;
+}
+
+.position-knob__label {
+  font-size: 0.5em;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0.0625em 0.0625em rgba(0, 0, 0, 0.5);
+  user-select: none;
+}
+
+.position-knob {
+  position: relative;
+  width: 4em;
+  height: 4em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &--small {
+    width: 3em;
+    height: 3em;
+
+    .position-knob__body {
+      width: 1.75em;
+      height: 1.75em;
+    }
+    .position-knob__value-box {
+      font-size: 0.5em;
+      padding: 0.15em 0.4em;
+    }
+    .position-knob__indicator {
+      width: 0.25em;
+      height: 0.375em;
+    }
+  }
+
+  &--large {
+    width: 5em;
+    height: 5em;
+
+    .position-knob__body {
+      width: 2.75em;
+      height: 2.75em;
+    }
+    .position-knob__value-box {
+      font-size: 0.7em;
+      padding: 0.25em 0.6em;
+    }
+  }
+}
+
+.position-knob__gauge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.position-knob__gauge-bg {
+  stroke: rgba(20, 30, 25, 0.9);
+}
+
+.position-knob__gauge-fill {
+  stroke: $glow-green;
+  filter: drop-shadow(0 0 0.1875em rgba($glow-green, 0.7));
+}
+
+.position-knob__body {
+  position: relative;
+  width: 2.25em;
+  height: 2.25em;
+  border-radius: 50%;
+  cursor: pointer;
+  touch-action: none;
+  z-index: 2;
+  background:
+    radial-gradient(ellipse 100% 50% at 50% 0%, rgba(80, 80, 80, 0.4) 0%, transparent 60%),
+    linear-gradient(145deg, #3a3a3a 0%, #1f1f1f 50%, #151515 100%);
+  box-shadow:
+    0 0.1875em 0.5em rgba(0, 0, 0, 0.7),
+    inset 0 0.0625em 0 rgba(255, 255, 255, 0.1),
+    inset 0 -0.125em 0.25em rgba(0, 0, 0, 0.4);
+}
+
+.position-knob__ridges {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.position-knob__rotate {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+.position-knob__indicator {
+  position: absolute;
+  width: 0.25em;
+  height: 0.7em;
+  background: linear-gradient(180deg, #fff 0%, #aaa 100%);
+  border-radius: 0.125em;
+  box-shadow: 0 0 0.25em rgba(0, 0, 0, 0.5);
+  top: 0.1em;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.position-knob__value-box {
+  position: absolute;
+  bottom: -0.55em;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+  border: 0.0625em solid rgba(50, 50, 50, 0.6);
+  border-radius: 0.1875em;
+  padding: 0.1875em 0.25em;
+  font-size: 0.625em;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-weight: bold;
+  color: $glow-cyan;
+  text-shadow: 0 0 0.375em rgba($glow-cyan, 0.6);
+  box-shadow:
+    inset 0 0.0625em 0.1875em rgba(0, 0, 0, 0.6),
+    0 0.0625em 0 rgba(255, 255, 255, 0.03);
+  white-space: nowrap;
+  z-index: 3;
+}

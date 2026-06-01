@@ -99,6 +99,15 @@ export class QrwcMicLineInputComponent {
   }
 
   /**
+   * Get the input gain string label for a specific channel
+   * @param channel - Channel number (1-based)
+   */
+  getInputGainString(channel: number): Signal<string> {
+    this.validateChannel(channel);
+    return this._inputGainBindings[channel - 1].string;
+  }
+
+  /**
    * Get the input invert state for a specific channel
    * @param channel - Channel number (1-based)
    */
@@ -141,6 +150,15 @@ export class QrwcMicLineInputComponent {
   getPreampGainPosition(channel: number): Signal<number> {
     this.validateChannel(channel);
     return this._preampGainBindings[channel - 1].position;
+  }
+
+  /**
+   * Get the preamp gain string label for a specific channel
+   * @param channel - Channel number (1-based)
+   */
+  getPreampGainString(channel: number): Signal<string> {
+    this.validateChannel(channel);
+    return this._preampGainBindings[channel - 1].string;
   }
 
   /**

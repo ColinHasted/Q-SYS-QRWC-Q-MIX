@@ -105,14 +105,14 @@ export class QrwcControlBinding {
   }
 
   /**
-   * Set the control via normalized position (0-1)
-   * Automatically applies linear or logarithmic scaling based on constructor parameter
+   * Set the control via normalized position (0-1).
+   * Sends Position directly via the Q-SYS IControlUpdate protocol field,
+   * so the processor handles all scaling server-side.
    */
   setPosition(position: number): void {
     const control = this.controlSignal();
-    const state = this.stateSignal();
 
-    if (!control || !state) {
+    if (!control) {
       console.warn(`Cannot setPosition: ${this.componentName}.${this.controlName} not connected`);
       return;
     }
@@ -122,19 +122,7 @@ export class QrwcControlBinding {
       return;
     }
 
-    const { ValueMin, ValueMax } = state;
-
-    if (ValueMin == null || ValueMax == null) {
-      console.error(`Control ${this.componentName}.${this.controlName} missing ValueMin/ValueMax`);
-      return;
-    }
-
-    // Calculate value from position using linear or logarithmic scaling
-    const value = this.useLog
-      ? ValueMin * Math.pow(ValueMax / ValueMin, position)
-      : ValueMin + position * (ValueMax - ValueMin);
-
-    control.update(value);
+    control.update({ Position: position });
   }
 
   /**

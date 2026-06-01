@@ -1,20 +1,15 @@
-<div class="control-pane control-pane--hpf">
+<div class="control-pane control-pane--hpf" [class.is-disabled]="disabled()">
   <div class="control-pane__header">HPF</div>
   <div class="control-pane__content">
     <app-gauge-knob
-      [value]="frequency()"
-      [min]="20"
-      [max]="400"
-      [step]="5"
-      size="small"
+      [position]="frequencyPosition()"
+      [displayValue]="frequencyString()"
+      size="normal"
       label="FREQ"
-      unit="Hz"
-      [showSign]="false"
-      (valueChange)="onFrequencyChange($event)"
+      (positionChange)="onFrequencyPositionChange($event)"
     />
   </div>
   <div class="control-pane__footer">
-    <button class="panel-toggle" [class.active]="on()"
-            (click)="onToggle()">ON</button>
+    <button class="panel-toggle" [class.active]="on()" (click)="onToggle()">ON</button>
   </div>
 </div>

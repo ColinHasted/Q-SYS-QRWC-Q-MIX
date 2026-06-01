@@ -1,19 +1,15 @@
-<div class="control-pane control-pane--monitor">
+<div class="control-pane control-pane--monitor" [class.is-disabled]="disabled()">
     <div class="control-pane__header">AUX SENDS</div>
     <div class="control-pane__content">
         <div class="aux-column">
-            @for (aux of [0, 1, 2, 3]; track $index) {
+            @for (aux of auxSends(); track aux.output) {
             <div class="aux-item">
                 <label>AUX {{ $index + 1 }}</label>
                 <app-gauge-knob
-                  [value]="getAuxSend($index)"
-                  [min]="-60"
-                  [max]="10"
-                  [step]="1"
+                  [position]="aux.position"
+                  [displayValue]="aux.displayString"
                   size="small"
-                  unit="dB"
-                  [showSign]="true"
-                  (valueChange)="onAuxSendChange($index, $event)"
+                  (positionChange)="onAuxSendChange(aux.uiIndex, $event)"
                 />
             </div>
             }
@@ -22,7 +18,7 @@
     <div class="control-pane__footer">
         <div class="channel-display">
           <span class="channel-display__label">CH</span>
-          <span class="channel-display__value">{{ channel() }}</span>
+          <span class="channel-display__value">{{ channel() ?? '–' }}</span>
         </div>
     </div>
 </div>

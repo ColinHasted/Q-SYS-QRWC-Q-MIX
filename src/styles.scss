@@ -1,5 +1,5 @@
 /* Q-Mix Surface Global Styles */
-/* Scalable UI using em units - designed for 16:10 aspect ratio */
+/* Scalable UI using em units - locked to a 16:9 stage */
 
 * {
   margin: 0;
@@ -11,21 +11,41 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: #0a1520;
+  background: #000;
   font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
-  aspect-ratio: 16/10;
-  // Scale the entire UI based on viewport
-  // For 16:10 aspect, we use the smaller of width/height-based scaling
-  // Base: 16px at 1920x1200 viewport (16:10)
-  // vw-based: 1920px viewport = 16px base → 16/1920 = 0.833vw
-  // vh-based: 1200px viewport = 16px base → 16/1200 = 1.333vh
-  // Use min() to ensure it fits both dimensions, max() for minimum readable size
-  font-size: clamp(0.5rem, min(0.833vw, 1.333vh), 1.25rem);
+    font-size: clamp(0.5rem, min(0.833cqw, 1.481cqh), 1.5rem);
+
 }
 
+// Centre the 16:9 stage in the viewport regardless of the viewport's own
+// aspect ratio. Letterbox/pillarbox bars appear when the host window doesn't
+// match 16:9.
 body {
-  overflow-x: auto;
-  overflow-y: auto;
+  display: grid;
+  place-items: center;
+}
+
+// The Angular root element is the 16:9 stage. Container queries let us scale
+// the entire UI to whichever dimension is the binding one — so a 1920×1080
+// window, a 2560×1440 window and a 3840×2160 window all render identically,
+// just at different pixel densities.
+app-root {
+  display: block;
+  position: relative;
+  // Take the largest box that fits inside the viewport while preserving 16:9.
+  width: min(100vw, calc(100vh * 16 / 9));
+  height: min(100vh, calc(100vw * 9 / 16));
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #0a1520;
+  // Establish a sizing container so cqw/cqh inside the UI resolve against
+  // the stage, not the (possibly larger) viewport.
+  container-type: size;
+  // Base font scale: 16px at a 1920×1080 stage.
+  //   width:  16 / 1920 ≈ 0.833cqw
+  //   height: 16 / 1080 ≈ 1.481cqh
+  // min() picks whichever is currently smaller so we never overflow either axis.
+  font-size: clamp(0.5rem, min(0.833cqw, 1.481cqh), 1.5rem);
 }
 
 // Prevent text selection on controls

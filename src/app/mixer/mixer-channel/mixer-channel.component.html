@@ -1,5 +1,5 @@
     <div class="mixer-channel" [class.mixer-channel--selected]="isSelected()">
-      <div class="mixer-channel__label">{{ label() }}</div>
+      <div class="mixer-channel__label mixer-channel__label--lcd">{{ label() }}</div>
 
       <!-- Pan Knob — Q-SYS pan: -1.0 to 1.0 -->
       <div class="mixer-channel__pan">
@@ -44,7 +44,8 @@
       <app-fader
         [value]="gain()"
         [min]="-100"
-        [max]="10"
+        [max]="20"
         (valueChange)="onFaderChange($event)"
       ></app-fader>
+            <div class="mixer-channel__label">{{ channelId() }}</div>
     </div>

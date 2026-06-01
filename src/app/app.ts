@@ -14,7 +14,7 @@ export class App {
   readonly coreIpAddress = '192.168.1.220';
 
   readonly qrwcService = inject(QrwcAngularService);
-  
+
   async ngOnInit(): Promise<void> {
     try {
       const entries = this.getQueryParameters();

@@ -12,40 +12,51 @@ import { ChannelProcessingService } from '../services/channel-processing.service
 export class MixerInputComponent {
   private readonly channelProcessing = inject(ChannelProcessingService);
 
-  channel = input.required<number>();
+  /** Selected channel, or null when nothing is selected. */
+  channel = input<number | null>(null);
 
-  // Resolve the correct block and local channel number reactively
-  private micInput = computed(() => this.channelProcessing.getMicInputBlock(this.channel()));
-  private localCh  = computed(() => this.channelProcessing.getLocalMicChannel(this.channel()));
+  /** True when no channel is selected — UI renders disabled. */
+  protected disabled = computed(() => this.channel() == null);
 
-  // QRWC signals — reactive to channel changes
-  gain    = computed(() => this.micInput().getInputGain(this.localCh())());
-  invert  = computed(() => this.micInput().getInputInvert(this.localCh())());
-  phantom = computed(() => this.micInput().getPhantomPower(this.localCh())());
-  // 'on' = not muted
-  on      = computed(() => !this.micInput().getInputMute(this.localCh())());
-  // VU from the digital input level (dBFS). TODO: normalise range if needed.
-  vuLevel = computed(() => this.micInput().getDigitalInputLevel(this.localCh())());
-  clip    = computed(() => this.micInput().getClip(this.localCh())());
+  // Resolve block + local channel in one shot.
+  private micCh = computed(() => {
+    const ch = this.channel();
+    return ch == null ? null : this.channelProcessing.getMicInput(ch);
+  });
+
+  // QRWC signals — return safe defaults when no channel is selected.
+  gainPosition = computed(() => { const m = this.micCh(); return m ? m.block.getPreampGainPosition(m.localCh)() : 0; });
+  gainDisplay  = computed(() => { const m = this.micCh(); return m ? m.block.getPreampGainString(m.localCh)() : ''; });
+  invert  = computed(() => { const m = this.micCh(); return m ? m.block.getInputInvert(m.localCh)() : false; });
+  phantom = computed(() => { const m = this.micCh(); return m ? m.block.getPhantomPower(m.localCh)() : false; });
+  on      = computed(() => { const m = this.micCh(); return m ? !m.block.getInputMute(m.localCh)() : false; });
+  vuLevel = computed(() => { const m = this.micCh(); return m ? m.block.getDigitalInputLevel(m.localCh)() : 0; });
+  clip    = computed(() => { const m = this.micCh(); return m ? m.block.getClip(m.localCh)() : false; });
 
   protected getVUSegments(): boolean[] {
-    return Array.from({ length: 12 }, (_, i) => this.vuLevel() >= (i + 1) * 8.33);
+    // Range: -60 to +10 dBFS across 12 segments (~5.8 dB each).
+    // Seg 8-9 = yellow (~-13 to -7 dBFS), seg 10-11 = red (~+4 to +10 dBFS).
+    const level = this.vuLevel();
+    return Array.from({ length: 12 }, (_, i) => level >= -60 + (i + 1) * (70 / 12));
   }
 
-  protected onGainChange(value: number): void {
-    this.micInput().SetInputGain(this.localCh(), value);
+  protected onGainPositionChange(position: number): void {
+    const m = this.micCh();
+    if (m) m.block.SetPreampGainPosition(m.localCh, position);
   }
 
   protected onInvertToggle(): void {
-    this.micInput().SetInputInvert(this.localCh(), !this.invert());
+    const m = this.micCh();
+    if (m) m.block.SetInputInvert(m.localCh, !this.invert());
   }
 
   protected onPhantomToggle(): void {
-    this.micInput().SetPhantomPower(this.localCh(), !this.phantom());
+    const m = this.micCh();
+    if (m) m.block.SetPhantomPower(m.localCh, !this.phantom());
   }
 
-  // on()=true means currently active — toggle sets mute = on()
   protected onToggle(): void {
-    this.micInput().SetInputMute(this.localCh(), this.on());
+    const m = this.micCh();
+    if (m) m.block.SetInputMute(m.localCh, this.on());
   }
 }

@@ -22,7 +22,7 @@ export class QrwcDelayComponent {
   constructor(private componentName: string) {
     // Master controls
     this._masterBypassBinding = this.qrwc.bindControl(componentName, 'bypass', false);
-    
+
     // Tap 1 controls (the main delay tap we use)
     this._tap1BypassBinding = this.qrwc.bindControl(componentName, 'bypass.1', false);
     this._tap1DelayBinding = this.qrwc.bindControl(componentName, 'delay.1', 0);
@@ -56,6 +56,13 @@ export class QrwcDelayComponent {
    */
   get delayPosition(): Signal<number> {
     return this._tap1DelayBinding.position;
+  }
+
+  /**
+   * Get the delay display string from the processor
+   */
+  get delayString(): Signal<string> {
+    return this._tap1DelayBinding.string;
   }
 
   /**
@@ -98,6 +105,13 @@ export class QrwcDelayComponent {
     } else {
       console.error(`Invalid delay: ${delayMs}. Must be >= 0.`);
     }
+  }
+
+  /**
+   * Set the delay via normalized position (0-1)
+   */
+  SetDelayPosition(position: number): void {
+    this._tap1DelayBinding.setPosition(position);
   }
 
   /**

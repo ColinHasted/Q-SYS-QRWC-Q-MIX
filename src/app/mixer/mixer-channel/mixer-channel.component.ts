@@ -1,7 +1,9 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import { PanKnobComponent } from '../shared/pan-knob/pan-knob.component';
 import { FaderComponent } from '../shared/fader/fader.component';
 import { QrwcMixerComponent } from '../../../qrwc/components/qrwc-mixer-component';
+import { MIXER_PROFILE } from '../mixer-profile';
+import { ChannelProcessingService } from '../services/channel-processing.service';
 
 @Component({
   selector: 'app-mixer-channel',
@@ -11,9 +13,14 @@ import { QrwcMixerComponent } from '../../../qrwc/components/qrwc-mixer-componen
   styleUrls: ['./mixer-channel.component.scss']
 })
 export class MixerChannelComponent {
+  private readonly profile = inject(MIXER_PROFILE);
+  private readonly channelProcessing = inject(ChannelProcessingService);
+  private readonly cueBus = this.profile.cueBus;
+
   channelId = input.required<number>();
   mixer = input.required<QrwcMixerComponent>();
-  selectedChannel = input.required<number>();
+  /** Currently selected channel (null when nothing is selected). */
+  selectedChannel = input.required<number | null>();
 
   select = output<void>();
 
@@ -25,19 +32,23 @@ export class MixerChannelComponent {
   // 'on' = not muted
   on = computed(() => !this.mixer().getInputMute(this.channelId())());
   solo = computed(() => this.mixer().getInputSolo(this.channelId())());
-  // Cue enable for cue bus 1
-  cueEnable = computed(() => this.mixer().getInputCueEnable(this.channelId(), 1)());
+  // Cue enable for the configured cue bus
+  cueEnable = computed(() => this.mixer().getInputCueEnable(this.channelId(), this.cueBus)());
 
-  // VU / clip: TODO — wire to QrwcMeterComponent when available
-  vuLevel = computed(() => 0);
-  clip = computed(() => false);
+  // VU / clip — sourced from the same Mic/Line Input block as the IN panel
+  private micCh = computed(() => this.channelProcessing.getMicInput(this.channelId()));
+  vuLevel = computed(() => this.micCh().block.getDigitalInputLevel(this.micCh().localCh)());
+  clip    = computed(() => this.micCh().block.getClip(this.micCh().localCh)());
 
   protected isSelected(): boolean {
     return this.channelId() === this.selectedChannel();
   }
 
   protected getVUSegments(): boolean[] {
-    return Array.from({ length: 12 }, (_, i) => this.vuLevel() >= (i + 1) * 8.33);
+    // Range: -60 to +10 dBFS across 12 segments (~5.8 dB each).
+    // Seg 8-9 = yellow (~-13 to -7 dBFS), seg 10-11 = red (~+4 to +10 dBFS).
+    const level = this.vuLevel();
+    return Array.from({ length: 12 }, (_, i) => level >= -60 + (i + 1) * (70 / 12));
   }
 
   protected formatPan(value: number): string {
@@ -64,7 +75,7 @@ export class MixerChannelComponent {
   }
 
   protected onCueToggle(): void {
-    this.mixer().SetInputCueEnable(this.channelId(), 1, !this.cueEnable());
+    this.mixer().SetInputCueEnable(this.channelId(), this.cueBus, !this.cueEnable());
   }
 
   protected onSelect(): void {

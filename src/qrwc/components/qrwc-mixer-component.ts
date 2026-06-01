@@ -258,6 +258,17 @@ export class QrwcMixerComponent {
   }
 
   /**
+   * Get the crosspoint gain display string between a specific input and output
+   * @param input - Input number (1-based)
+   * @param output - Output number (1-based)
+   */
+  getCrosspointGainString(input: number, output: number): Signal<string> {
+    this.validateInput(input);
+    this.validateOutput(output);
+    return this._crosspointGainBindings[input - 1][output - 1].string;
+  }
+
+  /**
    * Get the cue bus gain for a specific cue
    * @param cue - Cue number (1-based)
    */

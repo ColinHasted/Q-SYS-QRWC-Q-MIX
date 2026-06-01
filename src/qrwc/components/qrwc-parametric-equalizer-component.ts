@@ -33,11 +33,15 @@ export interface EQBand {
   Bypass: Signal<boolean>;
   Frequency: Signal<number>;
   FrequencyPosition: Signal<number>;
+  FrequencyString: Signal<string>;
   Gain: Signal<number>;
+  GainPosition: Signal<number>;
+  GainString: Signal<string>;
   Bandwidth: Signal<number>;
   BandwidthPosition: Signal<number>;
   Q: Signal<number>;
   QPosition: Signal<number>;
+  QString: Signal<string>;
   Type: Signal<FilterType>;
 }
 
@@ -76,15 +80,14 @@ export class QrwcParametricEqualizerComponent {
   public readonly ActiveEQBands: WritableSignal<EQBand[]> = signal([]);
   private debounceTimeout: any;
 
-  constructor(private componentName: string) {
+  constructor(private componentName: string, bandCount: number = 7) {
     // Update bindings with actual component name
     this._bypassBinding = this.qrwc.bindControl(componentName, 'bypass', false);
     this._gainBinding = this.qrwc.bindControl(componentName, 'master.gain', 0);
     this._invertBinding = this.qrwc.bindControl(componentName, 'invert', false);
     this._muteBinding = this.qrwc.bindControl(componentName, 'mute', false);
 
-    // Default to 7 bands if component not available
-    this.bands = 7; // TODO: Detect actual band count from component
+    this.bands = bandCount;
 
     this.initialiseSignals();
 
@@ -151,11 +154,15 @@ export class QrwcParametricEqualizerComponent {
         Bypass: bypassBinding.bool,
         Frequency: frequencyBinding.value,
         FrequencyPosition: frequencyBinding.position,
+        FrequencyString: frequencyBinding.string,
         Gain: gainBinding.value,
+        GainPosition: gainBinding.position,
+        GainString: gainBinding.string,
         Bandwidth: bandwidthBinding.value,
         BandwidthPosition: bandwidthBinding.position,
         Q: qBinding.value,
         QPosition: qBinding.position,
+        QString: qBinding.string,
         Type: typeBinding.value as Signal<FilterType>,
       };
     }
@@ -172,6 +179,10 @@ export class QrwcParametricEqualizerComponent {
 
   public setGain(band: number, value: number): void {
     this.EQBands[band]._gainBinding.setValue(value);
+  }
+
+  public setGainPosition(band: number, value: number): void {
+    this.EQBands[band]._gainBinding.setPosition(value);
   }
 
   public setFrequency(band: number, value: number): void {

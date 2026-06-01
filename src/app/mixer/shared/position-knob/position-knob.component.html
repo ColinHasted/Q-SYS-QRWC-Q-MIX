@@ -1,0 +1,41 @@
+@if (label()) {
+  <div class="position-knob__label">{{ label() }}</div>
+}
+
+<div class="position-knob"
+     [class.position-knob--small]="size() === 'small'"
+     [class.position-knob--large]="size() === 'large'">
+
+  <svg class="position-knob__gauge" viewBox="0 0 100 100">
+    <path class="position-knob__gauge-bg"
+          [attr.d]="gaugeBackgroundPath"
+          fill="none"
+          stroke-width="5"
+          stroke-linecap="round"/>
+    <path class="position-knob__gauge-fill"
+          [attr.d]="gaugeArcPath"
+          fill="none"
+          stroke-width="5"
+          stroke-linecap="round"/>
+  </svg>
+
+  <div class="position-knob__body"
+       #knobElement
+       (mousedown)="onMouseDown($event)"
+       (touchstart)="onTouchStart($event)">
+
+    <div class="position-knob__ridges">
+      @for (i of ridgeIndices; track i) {
+        <div class="position-knob__ridge" [style.--ridge-angle]="(i / ridgeCount) * 360 + 'deg'"></div>
+      }
+    </div>
+
+    <div class="position-knob__rotate" [style.transform]="rotationTransform">
+      <div class="position-knob__indicator"></div>
+    </div>
+  </div>
+
+  <div class="position-knob__value-box">
+    {{ displayValue() }}
+  </div>
+</div>

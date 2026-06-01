@@ -39,6 +39,9 @@ export class QrwcCompressorComponent {
   get attackPosition(): Signal<number> {
     return this._attackBinding.position;
   }
+  get attackString(): Signal<string> {
+    return this._attackBinding.string;
+  }
 
   /** The depth of the compressor in dB. */
   get depth(): Signal<number> {
@@ -47,6 +50,9 @@ export class QrwcCompressorComponent {
 
   get depthPosition(): Signal<number> {
     return this._depthBinding.position;
+  }
+  get depthString(): Signal<string> {
+    return this._depthBinding.string;
   }
 
   /** The level of the detector in dB. */
@@ -71,6 +77,9 @@ export class QrwcCompressorComponent {
   get outputGainPosition(): Signal<number> {
     return this._outputGainBinding.position;
   }
+  get outputGainString(): Signal<string> {
+    return this._outputGainBinding.string;
+  }
 
   /** The ratio of input to output level above the threshold. */
   get ratio(): Signal<number> {
@@ -79,6 +88,9 @@ export class QrwcCompressorComponent {
 
   get ratioPosition(): Signal<number> {
     return this._ratioBinding.position;
+  }
+  get ratioString(): Signal<string> {
+    return this._ratioBinding.string;
   }
 
   /** The release time in milliseconds. */
@@ -89,6 +101,9 @@ export class QrwcCompressorComponent {
   get releasePosition(): Signal<number> {
     return this._releaseBinding.position;
   }
+  get releaseString(): Signal<string> {
+    return this._releaseBinding.string;
+  }
 
   /** The soft knee width in dB. */
   get softKnee(): Signal<number> {
@@ -98,6 +113,9 @@ export class QrwcCompressorComponent {
   get softKneePosition(): Signal<number> {
     return this._softKneeBinding.position;
   }
+  get softKneeString(): Signal<string> {
+    return this._softKneeBinding.string;
+  }
 
   /** The threshold level in dB. */
   get thresholdLevel(): Signal<number> {
@@ -106,6 +124,9 @@ export class QrwcCompressorComponent {
 
   get thresholdLevelPosition(): Signal<number> {
     return this._thresholdLevelBinding.position;
+  }
+  get thresholdLevelString(): Signal<string> {
+    return this._thresholdLevelBinding.string;
   }
 
   /**

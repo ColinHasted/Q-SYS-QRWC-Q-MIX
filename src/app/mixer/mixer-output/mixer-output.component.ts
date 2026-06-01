@@ -12,18 +12,25 @@ import { ChannelProcessingService } from '../services/channel-processing.service
 export class MixerOutputComponent {
   private readonly channelProcessing = inject(ChannelProcessingService);
 
-  channel = input.required<number>();
+  channel = input<number | null>(null);
 
-  // delayOn = tap 1 is NOT bypassed
-  delayOn = computed(() => !this.channelProcessing.getDelay(this.channel()).tap1Bypass());
-  delayMs = computed(() => this.channelProcessing.getDelay(this.channel()).delay());
+  protected disabled = computed(() => this.channel() == null);
+
+  private delay = computed(() => {
+    const ch = this.channel();
+    return ch == null ? null : this.channelProcessing.getDelay(ch);
+  });
+
+  delayOn  = computed(() => { const d = this.delay(); return d ? !d.tap1Bypass() : false; });
+  delayPos = computed(() => this.delay()?.delayPosition() ?? 0);
+  delayStr = computed(() => this.delay()?.delayString() ?? '');
 
   protected onDelayToggle(): void {
-    const delay = this.channelProcessing.getDelay(this.channel());
-    delay.SetTap1Bypass(!delay.tap1Bypass());
+    const d = this.delay();
+    if (d) d.SetTap1Bypass(!d.tap1Bypass());
   }
 
-  protected onDelayChange(value: number): void {
-    this.channelProcessing.getDelay(this.channel()).SetDelay(value);
+  protected onDelayChange(position: number): void {
+    this.delay()?.SetDelayPosition(position);
   }
 }

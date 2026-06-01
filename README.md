@@ -1,59 +1,131 @@
-# QMixSurface
+# Q-Mix Surface
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.5.
+A browser-based mixing console UI for [Q-SYS](https://www.qsys.com/) audio cores. Built with
+Angular 21 and the [`@q-sys/qrwc`](https://www.npmjs.com/package/@q-sys/qrwc) WebSocket client,
+it presents a familiar physical-style mixer surface — faders, channel processing strip, aux sends,
+cue bus — wired live to named components inside a Q-SYS design.
 
-## Development server
+The UI is responsive and resolution-independent: a container query rescales the entire surface
+to fit any 16:9 display, from a tablet to a touchscreen mounted in an equipment rack.
 
-To start a local development server, run:
+## What's in the box
 
-```bash
-ng serve
-```
+The default profile is a **16-channel surface** with:
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- 16 input channels with label, pan, fader, mute, solo, cue and per-channel VU
+- Per-channel processing strip: HPF, gate, parametric EQ (7 bands), compressor, limiter, delay
+- Stereo master output with VU and mute
+- 4 aux sends per channel with aux-master section
+- Solo / cue bus
 
-## Code scaffolding
+A second profile for the **Q-SYS Core 510i** is shipped alongside
+(`designer/q-mix-surface 510i.qsys`). New surface variants — different channel counts, EQ band
+layouts, or Q-SYS component naming schemes — are added by declaring another `MixerProfile` and
+providing it through the `MIXER_PROFILE` injection token (see `src/app/mixer/mixer-profile.ts`).
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Architecture
 
-```bash
-ng generate component component-name
-```
+    ┌──────────────────────────────────────────────────────────┐
+    │  Angular UI (src/app/mixer/*)                            │
+    │  ─ MixerComponent: layout, channel selection             │
+    │  ─ Per-panel components: IN, HPF, GATE, EQ, COMP, …      │
+    │  ─ Shared controls: gauge-knob, scale-knob, fader, …     │
+    └──────────────────────┬───────────────────────────────────┘
+                           │  reads signals / calls set*()
+    ┌──────────────────────▼───────────────────────────────────┐
+    │  QRWC component wrappers (src/qrwc/components/*)         │
+    │  ─ One class per Q-SYS named component                   │
+    │  ─ Exposes Angular Signals for every Q-SYS control       │
+    │  ─ Typed setters issue updates back to the core          │
+    └──────────────────────┬───────────────────────────────────┘
+                           │
+    ┌──────────────────────▼───────────────────────────────────┐
+    │  QrwcAngularService — singleton WebSocket connection,    │
+    │  reconnect/backoff, components signal                    │
+    └──────────────────────┬───────────────────────────────────┘
+                           │ ws://CORE_IP/qrc-public-api/v0
+                           ▼
+                      Q-SYS Core (designer/*.qsys)
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+The boundary between the QRWC wrappers and the UI is pure Angular signals — no RxJS streams, no
+manual change detection. Every control state in Q-SYS is a `Signal`; every UI control writes
+back through a typed setter on the relevant component wrapper.
 
-```bash
-ng generate --help
-```
+## Q-SYS design files
 
-## Building
+The matching Q-SYS designs live in `designer/` and must be loaded into the core for the surface
+to work:
 
-To build the project run:
+| File | Surface variant |
+| --- | --- |
+| `q-mix-surface.qsys` | Default 16-channel build |
+| `q-mix-surface 510i.qsys` | Q-SYS Core 510i layout |
 
-```bash
-ng build
-```
+Component names inside the design (`Mixer`, `Gate_1`…`Gate_16`, `Mic_Line_Input_1`…, etc.) must
+match the templates in the active `MixerProfile`. Rename either side and the binding silently
+falls back to defaults.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Getting started
 
-## Running unit tests
+Prerequisites: Node 20+ and a reachable Q-SYS core (real or Designer-emulated).
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+    npm install
+    npm start
 
-```bash
-ng test
-```
+The dev server runs at <http://localhost:4200>.
 
-## Running end-to-end tests
+### Pointing at a core
 
-For end-to-end (e2e) testing, run:
+The default core IP is set in `src/app/app.ts` (`coreIpAddress`). You can override it at runtime
+with query parameters:
 
-```bash
-ng e2e
-```
+| Param | Purpose | Example |
+| --- | --- | --- |
+| `host` | Core IP or hostname | `?host=192.168.1.50` |
+| `poll` | Polling interval (ms) | `?poll=100` |
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+    http://localhost:4200/?host=10.0.0.42&poll=200
 
-## Additional Resources
+### Building for production
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+    npm run build
+
+Artefacts are emitted to `dist/`. The output is a static bundle — host it from any web server
+the cores can reach.
+
+## Project layout
+
+    src/
+      app/
+        mixer/                 mixer UI components, one per Q-SYS block
+          mixer-channel/       fader strip
+          mixer-input/         IN panel (gain, 48V, phantom, polarity)
+          mixer-hpf/           high-pass filter
+          mixer-gate/          gate with response graph
+          mixer-equalizer/     7-band parametric EQ + response graph
+          mixer-compressor/    compressor with curve display
+          mixer-limiter/       limiter
+          mixer-output/        per-channel output trim/delay
+          mixer-master/        stereo master output
+          mixer-aux-sends/     per-channel aux send levels
+          mixer-aux-master/    aux bus masters
+          mixer-cue/           cue/solo bus
+          services/            ChannelProcessingService — caches one
+                               processor instance per channel
+          shared/              fader, knobs, meters
+          mixer-profile.ts     MixerProfile interface + DEFAULT_MIXER_PROFILE
+        scss/                  design tokens, mixins, shared panel styles
+      qrwc/
+        qrwc-angular-service.ts   connection, reconnect, components signal
+        qrwc-control-binding.ts   reactive wrapper around a single Q-SYS control
+        components/               one wrapper per Q-SYS named component type
+    designer/                  matching .qsys design files
+
+## Useful npm scripts
+
+| Script | What it does |
+| --- | --- |
+| `npm start` | Dev server at :4200 with HMR |
+| `npm run build` | Production build to `dist/` |
+| `npm run watch` | Dev build, rebuild on change |
+| `npm test` | Vitest test runner |

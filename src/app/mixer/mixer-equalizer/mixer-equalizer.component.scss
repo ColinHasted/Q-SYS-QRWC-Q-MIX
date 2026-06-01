@@ -6,53 +6,90 @@
   display: contents;
 }
 
-// Equalizer Block
+// Equalizer Block — three-column horizontal layout so the knobs sit beside
+// the graph (right), the band selectors sit beside it (left), and nothing
+// overlaps the response display.
 .equalizer {
   flex: 1;
   display: flex;
-  flex-direction: column;
-  gap: 0.25em;
+  flex-direction: row;
+  gap: 0.5em;
   padding: 0.25em;
   min-height: 0;
   overflow: hidden;
+  align-items: stretch;
 
-  // Top section containing band selectors and display
+  // (legacy) top-section now unused — kept as a flex passthrough in case any
+  // residual markup references it.
   &__top-section {
-    display: flex;
-    gap: 0.5em;
-    flex: 1;
-    min-height: 0;
-    align-items: center;
-    justify-content: center;
+    display: contents;
   }
 
-  // Display wrapper - centered with flex
+  // Display wrapper — centre column, takes all remaining width.
   &__display-wrapper {
-    flex: 1;
+    flex: 1 1 auto;
     display: flex;
     justify-content: center;
     align-items: center;
+    min-width: 0;
     min-height: 0;
     overflow: hidden;
-    max-width: 80%;
   }
 
-  // 16:9 EQ display
+  // 16:9 EQ display — sunken glass look
   &__display {
     max-width: 100%;
     max-height: 100%;
     aspect-ratio: 16 / 9;
     background: linear-gradient(180deg,
-      rgba(0, 10, 20, 0.98) 0%,
-      rgba(0, 5, 10, 0.99) 100%
+      rgba(0, 3, 8, 1) 0%,
+      rgba(0, 8, 18, 0.99) 100%
     );
     position: relative;
-    border-radius: 0.25em;
-    border: 1px solid rgba(0, 200, 255, 0.3);
+    border-radius: 0.5em;
+    border: 1px solid rgba(0, 0, 0, 0.85);
+    border-top-color: rgba(0, 0, 0, 0.95);
+    border-bottom-color: rgba(255, 255, 255, 0.06);
     box-shadow:
-      0 0 0.5em rgba(0, 150, 200, 0.15),
-      inset 0 0 1em rgba(0, 150, 200, 0.1);
+      0 0.25em 0.75em rgba(0, 0, 0, 0.6),
+      inset 0 0.125em 0.5em rgba(0, 0, 0, 0.95),
+      inset 0 0 1.5em rgba(0, 0, 0, 0.4),
+      0 0 0.75em rgba(0, 120, 180, 0.08);
     overflow: hidden;
+    padding: 0.3em 0.4em;
+
+    // Glass sheen highlight across top
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(140deg,
+        rgba(255, 255, 255, 0.10) 0%,
+        rgba(255, 255, 255, 0.06) 30%,
+        rgba(255, 255, 255, 0.02) 55%,
+        transparent 70%
+      );
+      pointer-events: none;
+      border-radius: 0.5em;
+      z-index: 10;
+    }
+
+    // Diagonal rim glint from top-left
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 60%;
+      height: 1px;
+      background: linear-gradient(90deg,
+        rgba(255, 255, 255, 0.35) 0%,
+        rgba(255, 255, 255, 0.22) 50%,
+        transparent 100%
+      );
+      pointer-events: none;
+      z-index: 11;
+    }
 
     canvas {
       width: 100% !important;
@@ -83,8 +120,9 @@
     flex-direction: column;
     gap: 0.25em;
     justify-content: center;
-    align-items: stretch;
-    flex-shrink: 0;
+    align-items: center;
+    flex: 0 0 5.5em;
+    width: 5.5em;
   }
 
   &__band-label {
@@ -98,7 +136,7 @@
   }
 
   &__band-btn {
-    width: 2.5em;
+    width: 100%;
     height: 2.25em;
     border-radius: 0.25em;
     border: 0.0625em solid rgba(0, 0, 0, 0.5);
@@ -169,36 +207,58 @@
     }
   }
 
-  // Controls section with knobs
+  // Right column: knobs on top, filter buttons directly below.
   &__controls {
     display: flex;
     flex-direction: column;
-    gap: 0.75em;
+    gap: 0.5rem;
+    flex: 0 0 5.5em;
+    width: 5.5em;
+    align-self: stretch;
     align-items: center;
-    justify-content: space-evenly;
-    flex-shrink: 0;
-    padding: 0.5em 0;
   }
 
+  // Knobs: spread evenly to fill the remaining column height.
   &__knobs {
     display: flex;
-    gap: 1em;
-    align-items: flex-end;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 0.25em 0;
   }
 
-  // Filter type selector - horizontal below knobs
+  // Filter type selector — compact vertical stack below the knobs.
+  &__filter-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    flex: 0 0 auto;
+    align-self: stretch;
+  }
+
+  // Footer row — just the EQ bypass toggle.
+  &__footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  // Filter type selector — horizontal pill in the footer.
   &__filter-selector {
     display: flex;
     gap: 0;
     flex-shrink: 0;
     flex-direction: row;
-    justify-content: center;
+    justify-content: flex-end;
   }
 
   &__filter-btn {
-    width: 2.25em;
-    height: 1.25em;
-    padding: 0.25em;
+    width: 100%;
+    height: 1.5em;
+    padding: 0.2em;
     border: 1px solid rgba(0, 0, 0, 0.5);
     background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 50%, #1a1a1a 100%);
     color: #888;
@@ -213,24 +273,25 @@
     position: relative;
 
     img {
-      width: 0.625em;
-      height: 0.625em;
+      width: 1em;
+      height: 1em;
       opacity: 0.5;
       filter: brightness(0) saturate(100%) invert(58%) sepia(0%) saturate(0%) hue-rotate(180deg);
       transition: all 0.15s;
     }
 
+    // Vertical stacking: top/middle/bottom borders
     &--first {
-      border-radius: 0.125em 0 0 0.125em;
-      border-right: none;
+      border-radius: 0.125em 0.125em 0 0;
+      border-bottom: none;
     }
 
     &--middle {
-      border-right: none;
+      border-bottom: none;
     }
 
     &--last {
-      border-radius: 0 0.125em 0.125em 0;
+      border-radius: 0 0 0.125em 0.125em;
     }
 
     &:hover {
@@ -253,6 +314,40 @@
         opacity: 1;
         filter: brightness(0) saturate(100%) invert(88%) sepia(95%) saturate(1958%) hue-rotate(82deg) brightness(104%) contrast(102%);
       }
+    }
+  }
+
+  // Band bypass button — sits below the filter selector, full width.
+  &__band-bypass-btn {
+    width: 100%;
+    height: 2rem;
+    margin-top: 0.25em;
+    padding: 0;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    border-radius: 0.125em;
+    background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 50%, #1a1a1a 100%);
+    color: #888;
+    font-size: 0.5em;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &:hover {
+      background: linear-gradient(180deg, #4a4a4a 0%, #3a3a3a 50%, #2a2a2a 100%);
+      color: #aaa;
+    }
+
+    &--active {
+      background: linear-gradient(180deg, #4a1a1a 0%, #3a0a0a 50%, #2a0000 100%);
+      border-color: #ff4444;
+      color: #ff4444;
+      box-shadow: 0 0 0.5em rgba(255, 68, 68, 0.4);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: default;
     }
   }
 }

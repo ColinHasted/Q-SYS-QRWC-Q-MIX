@@ -1,69 +1,93 @@
-<div class="control-pane control-pane--eq">
+<div class="control-pane control-pane--eq" [class.is-disabled]="disabled()">
   <div class="control-pane__header">EQUALISER</div>
 
   <div class="equalizer">
-    <!-- Top section with band selectors and display -->
-    <div class="equalizer__top-section">
-      <!-- Band selector buttons (1-7) vertical -->
-      <div class="equalizer__band-selectors">
-        <div class="equalizer__band-label">BAND</div>
-        @for (band of eqBands(); track $index) {
-          <button 
-            class="equalizer__band-btn"
-            [class.equalizer__band-btn--active]="selectedBand() === $index"
-            [attr.data-band]="$index"
-            (click)="selectBand($index)">
-            {{ $index + 1 }}
-          </button>
-        }
-      </div>
+    <!-- Band selector buttons on the far left as a vertical column. -->
+    <div class="equalizer__band-selectors">
+      <div class="equalizer__band-label">BAND</div>
+      @for (i of bandSlots; track i) {
+        <button
+          class="equalizer__band-btn"
+          [class.equalizer__band-btn--active]="selectedBand() === i"
+          [attr.data-band]="i"
+          [disabled]="disabled()"
+          (click)="selectBand(i)">
+          {{ i + 1 }}
+        </button>
+      }
+    </div>
 
-      <!-- EQ Response Display -->
-      <div class="equalizer__display-wrapper">
-        <app-mixer-equalizer-response />
+    <!-- EQ response graph — centre column, takes all remaining width. -->
+    <div class="equalizer__display-wrapper">
+      <div class="equalizer__display">
+        <app-mixer-equalizer-response [parametricEQ]="qrwcEQ()" />
       </div>
     </div>
 
-    <!-- Single control set for selected band -->
+    <!-- Knob column + vertical filter chooser on the right, all within
+         the graph height. -->
     <div class="equalizer__controls">
       <div class="equalizer__knobs">
         <app-gauge-knob
-          [value]="currentBand.Gain()"
-          [min]="-18"
-          [max]="18"
+          [value]="currentBand?.Gain() ?? 0"
+          [min]="-20"
+          [max]="20"
           [step]="0.5"
           size="normal"
           label="GAIN"
           unit="dB"
           (valueChange)="onGainChange(selectedBand(), $event)" />
-        
+
         <app-gauge-knob
-          [value]="currentBand.Frequency()"
-          [min]="currentBandRange.min"
-          [max]="currentBandRange.max"
-          [step]="currentBandRange.step"
+          [position]="currentBand?.FrequencyPosition() ?? 0"
+          [displayValue]="currentBand?.FrequencyString() ?? ''"
           size="normal"
           label="FREQ"
-          unit="Hz"
           [showSign]="false"
-          (valueChange)="onFrequencyChange(selectedBand(), $event)" />
-        
+          (positionChange)="onFrequencyChange(selectedBand(), $event)" />
+
         <app-gauge-knob
-          [value]="currentBand.Q()"
-          [min]="0.1"
-          [max]="10"
-          [step]="0.1"
+          [position]="currentBand?.QPosition() ?? 0"
+          [displayValue]="currentBand?.QString() ?? ''"
           size="normal"
           label="Q"
-          unit=""
           [showSign]="false"
-          (valueChange)="onQChange(selectedBand(), $event)" />
+          (positionChange)="onQChange(selectedBand(), $event)" />
       </div>
+
+      <!-- Filter type chooser — vertical stack, fits beside the knobs. -->
+      <div class="equalizer__filter-selector">
+        @for (ft of filterTypes; track ft.type; let first = $first, last = $last) {
+          <button
+            class="equalizer__filter-btn"
+            [class.equalizer__filter-btn--first]="first"
+            [class.equalizer__filter-btn--last]="last"
+            [class.equalizer__filter-btn--middle]="!first && !last"
+            [class.equalizer__filter-btn--active]="currentFilterType() === ft.type"
+            [attr.aria-label]="ft.label"
+            [attr.title]="ft.label"
+            [disabled]="disabled()"
+            (click)="onFilterTypeChange(ft.type)">
+            <img [src]="ft.icon" [alt]="ft.label" />
+          </button>
+        }
+      </div>
+
+      <!-- Band bypass button — below the filter selector. -->
+      <button
+        class="equalizer__band-bypass-btn"
+        [class.equalizer__band-bypass-btn--active]="currentBand?.Bypass()"
+        [disabled]="disabled()"
+        title="Band Bypass"
+        (click)="onBandBypassToggle()">
+        BYPASS
+      </button>
     </div>
   </div>
 
   <div class="control-pane__footer">
     <button class="panel-toggle" [class.active]="!bypass()"
+            [disabled]="disabled()"
             (click)="onToggle()">EQ</button>
   </div>
 </div>

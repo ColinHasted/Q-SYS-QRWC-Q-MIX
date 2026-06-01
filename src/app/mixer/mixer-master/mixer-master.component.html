@@ -28,58 +28,22 @@
     <div class="channel-buttons">
       <button class="ch-btn mute" [class.active]="mute()"
               (click)="onMuteToggle()">MUTE</button>
-      <button class="ch-btn select" [class.active]="select()"
-              (click)="onSelectToggle()">SEL</button>
     </div>
 
-    <!-- Fader -->
-    <div class="fader-track master-track">
-      <div class="fader-scale-left">
-        <div class="scale-mark major"><span class="tick"></span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark major"><span class="tick"></span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark major"><span class="tick"></span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark major"><span class="tick"></span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark major"><span class="tick"></span></div>
-      </div>
+    <!-- Fader — the app-fader component renders its own scales/track/cap. -->
+    <app-fader
+      [value]="gain()"
+      [min]="-100"
+      [max]="10"
+      (valueChange)="onFaderChange($event)"
+    />
+  </div>
 
-      <app-fader
-        [value]="gain()"
-        [min]="-100"
-        [max]="10"
-        (valueChange)="onFaderChange($event)"
-      />
-
-      <div class="fader-scale-right">
-        <div class="scale-mark major"><span class="tick"></span><span class="label">10</span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark major"><span class="tick"></span><span class="label">0</span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark major"><span class="tick"></span><span class="label">-10</span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark major"><span class="tick"></span><span class="label">-20</span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark minor"><span class="tick"></span></div>
-        <div class="scale-mark major"><span class="tick"></span><span class="label">-∞</span></div>
-      </div>
-    </div>
+  <!-- QMIX logo lives inside the master section so the left border runs full
+       height and the logo fills the space below the fader. -->
+  <div class="master-branding">
+    <img src="q-sys-emblem-white.svg" alt="Q" class="master-branding__emblem" />
+    <div class="master-branding__mix">MIX</div>
+    <div class="master-branding__surface">SURFACE</div>
   </div>
 </div>

@@ -258,9 +258,10 @@ export class ParametricEQResponseCalculator {
 
     // Iterate through each band and calculate its complex response
     eqBands.forEach((band) => {
-      const { realResponse, imagResponse } = this.filterResponseCalculators[
-        band.Type
-      ](f, band, sampleRate);
+      const calculator =
+        this.filterResponseCalculators[band.Type] ??
+        this.calculateBiquadResponse.bind(this);
+      const { realResponse, imagResponse } = calculator(f, band, sampleRate);
 
       // Multiply the complex responses (real and imaginary parts)
       const tempReal = realTotal * realResponse - imagTotal * imagResponse;

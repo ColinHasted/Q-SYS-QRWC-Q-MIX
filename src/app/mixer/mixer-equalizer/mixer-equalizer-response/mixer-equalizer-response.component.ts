@@ -1,7 +1,31 @@
 import { Component, input, AfterViewInit, ViewChild, ElementRef, effect } from '@angular/core';
 import { ParametricEQBand, ParametricEQResponseCalculator } from '../../../../qrwc/components/helpers/parametric-eq-response-calculator';
-import { EQBand,QrwcParametricEqualizerComponent } from '../../../../qrwc/components/qrwc-parametric-equalizer-component';
+import { EQBand, FilterType, QrwcParametricEqualizerComponent } from '../../../../qrwc/components/qrwc-parametric-equalizer-component';
 import { Chart, LogarithmicScale, registerables } from 'chart.js';
+import { QrwcResponsalyzerComponent, RtaBandwidth } from '../../../../qrwc/components/qrwc-responsalyzer-component';
+
+/**
+ * Normalise a raw Q-SYS filter type value (0-indexed int, 1-indexed int, or
+ * string name) to a known FilterType enum member. Defaults to Parametric.
+ */
+function normalizeFilterType(raw: any): FilterType {
+  // String names sent by some Q-SYS firmware versions
+  if (typeof raw === 'string') {
+    const s = raw.toLowerCase();
+    if (s.includes('low') && s.includes('shelf'))  return FilterType.LowShelf;
+    if (s.includes('high') && s.includes('shelf')) return FilterType.HighShelf;
+    if (s.includes('param') || s.includes('peak') || s.includes('bell')) return FilterType.Parametric;
+    raw = Number(raw);
+  }
+  const n = Number(raw);
+  // 1-indexed enum values (matches what Q-SYS echoes back): 1=Parametric, 2=LowShelf, 3=HighShelf
+  if (n === FilterType.Parametric) return FilterType.Parametric; // 1
+  if (n === FilterType.LowShelf)   return FilterType.LowShelf;   // 2
+  if (n === FilterType.HighShelf)  return FilterType.HighShelf;  // 3
+  // 0-indexed fallback for initial state: only 0 is unambiguous
+  if (n === 0) return FilterType.Parametric;
+  return FilterType.Parametric;
+}
 
 function remapQRWCEqBands(eqBands: EQBand[]): ParametricEQBand[] {
   return eqBands.map((eqBand) => ({
@@ -9,7 +33,7 @@ function remapQRWCEqBands(eqBands: EQBand[]): ParametricEQBand[] {
     Gain: eqBand.Gain(),
     Bandwidth: eqBand.Bandwidth(),
     Q: eqBand.Q(),
-    Type: eqBand.Type(),
+    Type: normalizeFilterType(eqBand.Type()),
   }));
 }
 
@@ -28,32 +52,93 @@ export class MixerEqualizerResponseComponent implements AfterViewInit {
 
   chart: any;
 
-  public ParametricEqualizer: QrwcParametricEqualizerComponent;
-  
-  constructor() {
-    this.ParametricEqualizer = new QrwcParametricEqualizerComponent(
-      'Parametric_Equalizer'
-    );
+  @ViewChild('responseCanvas') private canvasRef!: ElementRef<HTMLCanvasElement>;
 
-    effect(() => {
-      var bands = remapQRWCEqBands(this.ParametricEqualizer.ActiveEQBands());
-      var response =
-        this.ParametricEQResponseCalculator.calculateFilterResponse(bands);
-      if (!this.chart) return;
-      this.chart.data.datasets[0].data = response.map((r) => r.Magnitude);
-      this.chart.data.datasets[1].data = response.map((r) => r.Phase);
-      this.chart.data.datasets[2].data = this.ParametricEqualizer.EQBands.map(
-        (band) => {
-          return {
-            x: Number(band.Frequency()) || 0,
-            y: Number(band.Gain()) || 0,
-          };
-        }
-      );
-      requestAnimationFrame(() => {
-        this.chart.update();
-      });
+  /** Coalesce all chart.update() calls into a single rAF per frame. */
+  private chartUpdatePending = false;
+  private scheduleChartUpdate(): void {
+    if (this.chartUpdatePending) return;
+    this.chartUpdatePending = true;
+    requestAnimationFrame(() => {
+      this.chartUpdatePending = false;
+      if (this.chart) this.chart.update();
     });
+  }
+
+  /** The EQ component for the currently selected channel (null when nothing is selected). */
+  parametricEQ = input<QrwcParametricEqualizerComponent | null>(null);
+
+  /** Fixed responsalyzer — component name never changes. */
+  private readonly responsalyzerComponent = new QrwcResponsalyzerComponent(
+    'Responsalyzer',
+    RtaBandwidth.Octave24
+  );
+
+  constructor() {
+    effect(() => {
+      // Always read ALL reactive signals first so they're tracked regardless
+      // of whether the chart exists yet.
+      const eq = this.parametricEQ();
+      const bands = eq ? remapQRWCEqBands(eq.ActiveEQBands()) : null;
+      const bandPoints = eq?.EQBands.map((band) => ({
+        x: Number(band.Frequency()) || 0,
+        y: Number(band.Gain()) || 0,
+      }));
+
+      if (!this.chart) return;
+
+      if (!eq || !bands) {
+        this.chart.data.datasets[0].data = [];
+        this.chart.data.datasets[1].data = [];
+        this.chart.data.datasets[2].data = [];
+        this.scheduleChartUpdate();
+        return;
+      }
+
+      const response = this.ParametricEQResponseCalculator.calculateFilterResponse(bands);
+      this.chart.data.datasets[0].data = response.map((r) => ({ x: r.Frequency, y: r.Magnitude }));
+      this.chart.data.datasets[1].data = response.map((r) => ({ x: r.Frequency, y: r.Phase }));
+      this.chart.data.datasets[2].data = bandPoints!;
+      this.scheduleChartUpdate();
+    });
+
+    // Responsalyzer — re-runs whenever magnitude or frequency data changes.
+    effect(() => {
+      const magnitude = this.responsalyzerComponent.magnitude();
+      const frequencies = this.responsalyzerComponent.frequencies();
+      if (!this.chart) return;
+      if (!magnitude?.length || !frequencies?.length) {
+        this.chart.data.datasets[3].data = [];
+        this.scheduleChartUpdate();
+        return;
+      }
+      this.chart.data.datasets[3].data = frequencies.map((freq, i) => ({
+        x: freq,
+        y: magnitude[i],
+      }));
+      this.scheduleChartUpdate();
+    });
+  }
+
+  private updateEQCurve(): void {
+    const eq = this.parametricEQ();
+    if (!this.chart) return;
+    if (!eq) {
+      this.chart.data.datasets[0].data = [];
+      this.chart.data.datasets[1].data = [];
+      this.chart.data.datasets[2].data = [];
+      this.scheduleChartUpdate();
+      return;
+    }
+    const bands = remapQRWCEqBands(eq.ActiveEQBands());
+    const response = this.ParametricEQResponseCalculator.calculateFilterResponse(bands);
+    this.chart.data.datasets[0].data = response.map((r) => ({ x: r.Frequency, y: r.Magnitude }));
+    this.chart.data.datasets[1].data = response.map((r) => ({ x: r.Frequency, y: r.Phase }));
+    this.chart.data.datasets[2].data = eq.EQBands.map((band) => ({
+      x: Number(band.Frequency()) || 0,
+      y: Number(band.Gain()) || 0,
+    }));
+    this.scheduleChartUpdate();
   }
 
   ngAfterViewInit(): void {
@@ -61,17 +146,14 @@ export class MixerEqualizerResponseComponent implements AfterViewInit {
     Chart.register(...registerables, LogarithmicScale);
 
     // Create the Chart.js chart
-    const ctx = document.getElementById('responseGraph') as HTMLCanvasElement;
+    const ctx = this.canvasRef.nativeElement;
     this.chart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: this.ParametricEQResponseCalculator.frequencies, // Frequency labels
-
         datasets: [
           {
             label: 'EQ Response',
             data: [],
-            cubicInterpolationMode: 'monotone',
             tension: 0.25, // light curve smoothing (0..1)
             borderColor: '#00cc66', // Darker green for dark background
             borderWidth: 1,
@@ -82,7 +164,6 @@ export class MixerEqualizerResponseComponent implements AfterViewInit {
           {
             label: 'Phase (degrees)',
             data: [],
-            cubicInterpolationMode: 'monotone',
             tension: 0.25, // light curve smoothing (0..1)
             borderColor: '#ff6b35', // Orange for contrast on dark background
             borderWidth: 1,
@@ -92,10 +173,10 @@ export class MixerEqualizerResponseComponent implements AfterViewInit {
           },
           {
             label: 'EQ Band Points',
-            data: [,],
+            data: [],
             borderColor: '#ffdd00', // Bright yellow for visibility
             pointBorderColor: (context) => {
-              return this.ParametricEqualizer.EQBands[
+              return this.parametricEQ()?.EQBands[
                 Number(context.dataIndex)
               ]?.Bypass()
                 ? '#cc2222' // Darker red for bypassed
@@ -105,6 +186,17 @@ export class MixerEqualizerResponseComponent implements AfterViewInit {
             showLine: false, // Disable connecting lines between the dots
             yAxisID: 'y', // Attach to the right Y-axis
           },
+          {
+            label: 'RTA',
+            data: [],
+            borderColor: 'rgba(192, 75, 192, 0.85)',
+            borderWidth: 1,
+            fill: false,
+            pointRadius: 0,
+            tension: 0,
+            yAxisID: 'y',
+          },
+
         ],
       },
       options: {
@@ -201,12 +293,15 @@ export class MixerEqualizerResponseComponent implements AfterViewInit {
     // Add ResizeObserver for better responsive behavior
     if (window.ResizeObserver) {
       const resizeObserver = new ResizeObserver(() => {
-        if (this.chart) {
-          this.chart.resize();
-        }
+        requestAnimationFrame(() => {
+          if (this.chart) this.chart.resize();
+        });
       });
       resizeObserver.observe(ctx.parentElement!);
     }
+
+    // Chart was null when effects first ran — draw now with whatever data is available.
+    this.updateEQCurve();
   }
 
 }

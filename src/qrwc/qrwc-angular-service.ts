@@ -135,7 +135,7 @@ export class QrwcAngularService implements OnDestroy {
         : null;
     });
   }
-  
+
 
   /**
    * Create a callable control binding with automatic type inference.
@@ -289,9 +289,8 @@ export class QrwcAngularService implements OnDestroy {
       setPosition: {
         value: (position: number) => {
           const control = controlSignal();
-          const state = stateSignal();
 
-          if (!control || !state) {
+          if (!control) {
             console.warn(`Cannot setPosition: ${componentName}.${controlName} not connected`);
             return;
           }
@@ -301,18 +300,7 @@ export class QrwcAngularService implements OnDestroy {
             return;
           }
 
-          const { ValueMin, ValueMax } = state;
-
-          if (ValueMin == null || ValueMax == null) {
-            console.error(`Control ${componentName}.${controlName} missing ValueMin/ValueMax`);
-            return;
-          }
-
-          const valueToSet = useLog
-            ? ValueMin * Math.pow(ValueMax / ValueMin, position)
-            : ValueMin + position * (ValueMax - ValueMin);
-
-          control.update(valueToSet);
+          control.update({ Position: position });
         },
         enumerable: true,
       },

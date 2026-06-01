@@ -1,9 +1,7 @@
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { FaderComponent } from '../shared/fader/fader.component';
 import { QrwcMixerComponent } from '../../../qrwc/components/qrwc-mixer-component';
-
-// Output 5 = main stereo output. Outputs 1-4 are the 4 aux send buses.
-const MAIN_OUTPUT = 5;
+import { MIXER_PROFILE } from '../mixer-profile';
 
 @Component({
   selector: 'app-mixer-master',
@@ -13,14 +11,16 @@ const MAIN_OUTPUT = 5;
   styleUrls: ['./mixer-master.component.scss']
 })
 export class MixerMasterComponent {
+  private readonly profile = inject(MIXER_PROFILE);
+
   mixer = input.required<QrwcMixerComponent>();
 
-  // Real QRWC signals
-  gain = computed(() => this.mixer().getOutputGain(MAIN_OUTPUT)());
-  mute = computed(() => this.mixer().getOutputMute(MAIN_OUTPUT)());
+  /** Main stereo output index (from active profile). */
+  private readonly mainOutput = this.profile.mainOutput;
 
-  // Local UI state — select has no Q-SYS mapping yet
-  select = signal(false);
+  // Real QRWC signals
+  gain = computed(() => this.mixer().getOutputGain(this.mainOutput)());
+  mute = computed(() => this.mixer().getOutputMute(this.mainOutput)());
 
   // VU meters: TODO — wire to a QrwcMeterComponent when available
   vuLevelL = 0;
@@ -29,15 +29,11 @@ export class MixerMasterComponent {
   clipR = false;
 
   onFaderChange(dB: number): void {
-    this.mixer().SetOutputGain(MAIN_OUTPUT, dB);
+    this.mixer().SetOutputGain(this.mainOutput, dB);
   }
 
   onMuteToggle(): void {
-    this.mixer().SetOutputMute(MAIN_OUTPUT, !this.mute());
-  }
-
-  onSelectToggle(): void {
-    this.select.update(s => !s);
+    this.mixer().SetOutputMute(this.mainOutput, !this.mute());
   }
 
   getVUSegments(level: number): boolean[] {

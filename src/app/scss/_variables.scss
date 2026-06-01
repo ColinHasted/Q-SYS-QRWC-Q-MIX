@@ -11,17 +11,18 @@ $brushed-metal: linear-gradient(90deg,
   rgba(60, 100, 140, 0.3) 100%
 );
 
-// Panel Colors (Soundcraft style)
-$panel-in: #2a6a7a;
-$panel-hpf: #5a5a7a;
-$panel-gate: #4a8a4a;
-$panel-comp: #5a9a5a;
-$panel-eq: #aa4444;
-$panel-limiter: #8a3a3a;
-$panel-out: #aa8833;
-$panel-monitor: #3a5a8a;
-$panel-cue: #7a5a8a;        // Purple for Cue
-$panel-aux-master: #5a7a5a; // Darker green for Aux Master
+// Panel Colors — Vi-inspired "coloured flood" palette, shifted so no hue
+// is an exact Vi match. Saturation and lightness tuned for Q-SYS touchscreens.
+$panel-in:          #1d6878;   // Teal-cyan        (was Vi cyan, shifted warmer)
+$panel-hpf:         #424875;   // Slate-indigo      (was Vi blue-purple, desaturated)
+$panel-gate:        #3a7850;   // Cool forest       (was Vi green, cooler/bluer)
+$panel-comp:        #6a7a38;   // Yellow-olive      (was Vi yellow-green, darker)
+$panel-eq:          #8c3848;   // Rose-burgundy     (was Vi red, shifted to burgundy)
+$panel-limiter:     #6a2848;   // Deep plum         (was Vi dark-red, shifted purple)
+$panel-out:         #a87228;   // Warm copper       (was Vi amber, slightly cooler)
+$panel-monitor:     #326885;   // Cobalt-steel      (was Vi steel, deeper blue)
+$panel-cue:         #784888;   // Violet-purple     (was Vi purple, shifted cooler)
+$panel-aux-master:  #4a7860;   // Teal-sage         (was Vi sage, more teal)
 
 $glow-cyan: #00ffff;
 $glow-green: #00ff66;

@@ -61,6 +61,9 @@ export class QrwcGateComponent {
   get attackPosition(): Signal<number> {
     return this._attackBinding.position;
   }
+  get attackString(): Signal<string> {
+    return this._attackBinding.string;
+  }
 
   /** The depth of the gate in dB. */
   get depth(): Signal<number> {
@@ -69,6 +72,9 @@ export class QrwcGateComponent {
 
   get depthPosition(): Signal<number> {
     return this._depthBinding.position;
+  }
+  get depthString(): Signal<string> {
+    return this._depthBinding.string;
   }
 
   /** The level of the detector in dB. */
@@ -83,6 +89,9 @@ export class QrwcGateComponent {
 
   get holdTimePosition(): Signal<number> {
     return this._holdTimeBinding.position;
+  }
+  get holdTimeString(): Signal<string> {
+    return this._holdTimeBinding.string;
   }
 
   /** The input gain in dB. */
@@ -116,6 +125,9 @@ export class QrwcGateComponent {
   get releasePosition(): Signal<number> {
     return this._releaseBinding.position;
   }
+  get releaseString(): Signal<string> {
+    return this._releaseBinding.string;
+  }
 
   /** The threshold level in dB. */
   get thresholdLevel(): Signal<number> {
@@ -125,6 +137,9 @@ export class QrwcGateComponent {
   /** The threshold level position. */
   get thresholdLevelPosition(): Signal<number> {
     return this._thresholdLevelBinding.position;
+  }
+  get thresholdLevelString(): Signal<string> {
+    return this._thresholdLevelBinding.string;
   }
 
 

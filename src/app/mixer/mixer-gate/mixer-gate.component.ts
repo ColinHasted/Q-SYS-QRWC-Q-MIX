@@ -15,27 +15,40 @@ export class MixerGateComponent implements AfterViewInit {
 
   private readonly channelProcessing = inject(ChannelProcessingService);
 
-  // Input: which channel (1-16) this gate UI is controlling
-  channel = input.required<number>();
+  // Input: which channel this gate UI is controlling (null = no selection).
+  channel = input<number | null>(null);
 
-  // Computed: get the QRWC gate component for the current channel
-  private qrwcGate = computed<QrwcGateComponent>(() => {
-    return this.channelProcessing.getGate(this.channel());
+  protected disabled = computed(() => this.channel() == null);
+
+  // Computed: get the QRWC gate component for the current channel (or null).
+  private qrwcGate = computed<QrwcGateComponent | null>(() => {
+    const ch = this.channel();
+    return ch == null ? null : this.channelProcessing.getGate(ch);
   });
 
-  // Expose QRWC signals for template binding
-  bypass = computed(() => this.qrwcGate().bypass());
-  threshold = computed(() => this.qrwcGate().thresholdLevel());
-  attack = computed(() => this.qrwcGate().attack());
-  hold = computed(() => this.qrwcGate().holdTime());
-  release = computed(() => this.qrwcGate().release());
-  depth = computed(() => this.qrwcGate().depth());
-  detectorLevel = computed(() => this.qrwcGate().detectorLevel());
-  open = computed(() => this.qrwcGate().open());
+  // Expose QRWC signals for template binding with safe defaults.
+  bypass        = computed(() => this.qrwcGate()?.bypass() ?? true);
+  thresholdPos  = computed(() => this.qrwcGate()?.thresholdLevelPosition() ?? 0);
+  thresholdStr  = computed(() => this.qrwcGate()?.thresholdLevelString() ?? '');
+  attackPos     = computed(() => this.qrwcGate()?.attackPosition() ?? 0);
+  attackStr     = computed(() => this.qrwcGate()?.attackString() ?? '');
+  holdPos       = computed(() => this.qrwcGate()?.holdTimePosition() ?? 0);
+  holdStr       = computed(() => this.qrwcGate()?.holdTimeString() ?? '');
+  releasePos    = computed(() => this.qrwcGate()?.releasePosition() ?? 0);
+  releaseStr    = computed(() => this.qrwcGate()?.releaseString() ?? '');
+  depthPos      = computed(() => this.qrwcGate()?.depthPosition() ?? 0);
+  depthStr      = computed(() => this.qrwcGate()?.depthString() ?? '');
+  detectorLevel = computed(() => this.qrwcGate()?.detectorLevel() ?? -80);
+  open          = computed(() => this.qrwcGate()?.open() ?? false);
+
+  // Keep value signals for the curve canvas
+  threshold     = computed(() => this.qrwcGate()?.thresholdLevel() ?? -40);
+  depth         = computed(() => this.qrwcGate()?.depth() ?? 0);
 
   constructor() {
     effect(() => {
-      const _ = [this.threshold(), this.depth()];
+      // Track signals that should trigger a redraw.
+      const _ = [this.threshold(), this.depth(), this.disabled()];
       if (this.curveCanvas) {
         this.drawCurve();
       }
@@ -48,28 +61,14 @@ export class MixerGateComponent implements AfterViewInit {
 
   protected onToggle(): void {
     const gate = this.qrwcGate();
-    gate.SetBypass(!gate.bypass());
+    if (gate) gate.SetBypass(!gate.bypass());
   }
 
-  protected onThresholdChange(value: number): void {
-    this.qrwcGate().SetThresholdLevel(value);
-  }
-
-  protected onAttackChange(value: number): void {
-    this.qrwcGate().SetAttack(value);
-  }
-
-  protected onHoldChange(value: number): void {
-    this.qrwcGate().SetHoldTime(value);
-  }
-
-  protected onReleaseChange(value: number): void {
-    this.qrwcGate().SetRelease(value);
-  }
-
-  protected onDepthChange(value: number): void {
-    this.qrwcGate().SetDepth(value);
-  }
+  protected onThresholdChange(position: number): void { this.qrwcGate()?.SetThresholdLevelPosition(position); }
+  protected onAttackChange(position: number): void    { this.qrwcGate()?.SetAttackPosition(position); }
+  protected onHoldChange(position: number): void      { this.qrwcGate()?.SetHoldTimePosition(position); }
+  protected onReleaseChange(position: number): void   { this.qrwcGate()?.SetReleasePosition(position); }
+  protected onDepthChange(position: number): void     { this.qrwcGate()?.SetDepthPosition(position); }
 
   private drawCurve(): void {
     if (!this.curveCanvas?.nativeElement) return;
@@ -93,6 +92,9 @@ export class MixerGateComponent implements AfterViewInit {
       ctx.lineTo(width, y);
       ctx.stroke();
     }
+
+    // When no channel selected, leave the canvas as an empty grid only.
+    if (this.disabled()) return;
 
     // Draw gate curve
     const thresholdNorm = (this.threshold() + 80) / 80; // -80 to 0 -> 0 to 1

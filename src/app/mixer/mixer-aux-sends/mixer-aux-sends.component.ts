@@ -1,5 +1,7 @@
-import { Component, input, output, computed, inject } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { GaugeKnobComponent } from '../shared/gauge-knob/gauge-knob.component';
+import { QrwcMixerComponent } from '../../../qrwc/components/qrwc-mixer-component';
+import { MIXER_PROFILE } from '../mixer-profile';
 
 @Component({
   selector: 'app-mixer-aux-sends',
@@ -9,28 +11,35 @@ import { GaugeKnobComponent } from '../shared/gauge-knob/gauge-knob.component';
   styleUrls: ['./mixer-aux-sends.component.scss']
 })
 export class MixerAuxSendsComponent {
-  // Inputs: current channel and mixer QRWC component
-  channel = input.required<number>();
-  mixer = input.required<any>(); // QrwcMixerComponent
+  private readonly profile = inject(MIXER_PROFILE);
 
-  // Computed: get aux send levels (crosspoint 1-4) for the current channel
-  auxSend1 = computed(() => this.mixer().getCrosspointGain(this.channel(), 1)());
-  auxSend2 = computed(() => this.mixer().getCrosspointGain(this.channel(), 2)());
-  auxSend3 = computed(() => this.mixer().getCrosspointGain(this.channel(), 3)());
-  auxSend4 = computed(() => this.mixer().getCrosspointGain(this.channel(), 4)());
+  // Inputs: current channel (null when nothing selected) and mixer QRWC component.
+  channel = input<number | null>(null);
+  mixer = input.required<QrwcMixerComponent>();
 
-  protected onAuxSendChange(auxIndex: number, value: number): void {
-    // auxIndex is 0-3, but crosspoint outputs are 1-4
-    this.mixer().SetCrosspointGain(this.channel(), auxIndex + 1, value);
-  }
+  protected disabled = computed(() => this.channel() == null);
 
-  protected getAuxSend(index: number): number {
-    switch(index) {
-      case 0: return this.auxSend1();
-      case 1: return this.auxSend2();
-      case 2: return this.auxSend3();
-      case 3: return this.auxSend4();
-      default: return -60;
-    }
+  /** Aux send bus indices from the active mixer profile. */
+  readonly auxIndices = this.profile.auxOutputs;
+
+  /**
+   * Reactive array of aux send levels (one per profile.auxOutputs entry).
+   * Returns -∞-ish defaults when no channel is selected.
+   */
+  protected auxSends = computed(() => {
+    const ch = this.channel();
+    const mx = this.mixer();
+    return this.auxIndices.map((output, i) => ({
+      uiIndex: i,
+      output,
+      position: ch == null ? 0 : mx.getCrosspointGainPosition(ch, output)(),
+      displayString: ch == null ? '' : mx.getCrosspointGainString(ch, output)(),
+    }));
+  });
+
+  protected onAuxSendChange(uiIndex: number, position: number): void {
+    const ch = this.channel();
+    if (ch == null) return;
+    this.mixer().SetCrosspointGainPosition(ch, this.auxIndices[uiIndex], position);
   }
 }

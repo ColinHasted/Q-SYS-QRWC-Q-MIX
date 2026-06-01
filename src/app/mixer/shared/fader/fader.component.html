@@ -43,11 +43,15 @@
     <div class="scale-mark major"><span class="tick"></span></div>
   </div>
   
-  <div class="fader-wrapper">
-    <input type="range" class="mixer-fader" [min]="min()" [max]="max()" [step]="step()"
-           [value]="value()"
-           (input)="onValueChange(+$any($event.target).value)"
-           >
+  <div class="fader-wrapper" #faderWrapper
+       [style.--fader-pct]="positionPct()"
+       [class.fader-wrapper--dragging]="dragging"
+       (pointerdown)="onPointerDown($event)"
+       (pointermove)="onPointerMove($event)"
+       (pointerup)="onPointerUp()"
+       (pointercancel)="onPointerUp()">
+    <!-- Visible cap — purely presentational, positioned from value%. -->
+    <div class="fader-cap" aria-hidden="true"></div>
   </div>
   
   <div class="fader-scale-right">

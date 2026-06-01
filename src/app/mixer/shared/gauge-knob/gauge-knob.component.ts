@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
 export class GaugeKnobComponent implements OnDestroy {
   @ViewChild('knobElement') knobElement!: ElementRef<HTMLElement>;
 
-  value = input.required<number>();
+  value = input<number>(0);
   min = input<number>(0);
   max = input<number>(100);
   step = input<number>(1);
@@ -20,11 +20,22 @@ export class GaugeKnobComponent implements OnDestroy {
   unit = input<string>('dB');
   showSign = input<boolean>(true);
 
+  /** Optional 0-1 position from the processor. When provided, drives the knob
+   *  position directly and emits positionChange instead of valueChange on drag. */
+  position = input<number | undefined>(undefined);
+
+  /** Optional display string from the processor. When provided, replaces the
+   *  internally computed value label in the value box. */
+  displayValue = input<string | undefined>(undefined);
+
   valueChange = output<number>();
+  
+  positionChange = output<number>();
 
   private isDragging = false;
   private startY = 0;
   private startValue = 0;
+  private startPosition = 0;
   private boundMouseMove = this.onMouseMove.bind(this);
   private boundMouseUp = this.onMouseUp.bind(this);
   private boundTouchMove = this.onTouchMove.bind(this);
@@ -35,18 +46,17 @@ export class GaugeKnobComponent implements OnDestroy {
   ridgeIndices = Array.from({ length: this.ridgeCount }, (_, i) => i);
 
   get rotationTransform(): string {
-    const minVal = this.min();
-    const maxVal = this.max();
-    const currentVal = this.value();
-    
-    // Map value to rotation: 135deg to 405deg (270 degree range, rotated 90 CCW)
-    const percentage = (currentVal - minVal) / (maxVal - minVal);
+    const pos = this.position();
+    const percentage = pos !== undefined
+      ? Math.max(0, Math.min(1, pos))
+      : (this.value() - this.min()) / (this.max() - this.min());
     const rotation = -135 + (percentage * 270);
-    
     return `rotate(${rotation}deg)`;
   }
 
   get gaugePercentage(): number {
+    const pos = this.position();
+    if (pos !== undefined) return Math.max(0, Math.min(1, pos)) * 100;
     const minVal = this.min();
     const maxVal = this.max();
     const currentVal = this.value();
@@ -106,6 +116,8 @@ export class GaugeKnobComponent implements OnDestroy {
   }
 
   get formattedValue(): string {
+    const dv = this.displayValue();
+    if (dv !== undefined) return dv;
     const val = this.value();
     const sign = this.showSign() && val > 0 ? '+' : '';
     return `${sign}${val}${this.unit()}`;
@@ -134,6 +146,7 @@ export class GaugeKnobComponent implements OnDestroy {
     this.isDragging = true;
     this.startY = clientY;
     this.startValue = this.value();
+    this.startPosition = this.position() ?? 0;
   }
 
   private onMouseMove(event: MouseEvent): void {
@@ -150,17 +163,27 @@ export class GaugeKnobComponent implements OnDestroy {
 
   private updateValue(clientY: number): void {
     const deltaY = this.startY - clientY;
-    const range = this.max() - this.min();
-    const sensitivity = range / 150;
-    
-    let newValue = this.startValue + (deltaY * sensitivity);
-    
-    const stepVal = this.step();
-    newValue = Math.round(newValue / stepVal) * stepVal;
-    newValue = Math.max(this.min(), Math.min(this.max(), newValue));
-    
-    if (newValue !== this.value()) {
-      this.valueChange.emit(newValue);
+    const pos = this.position();
+
+    if (pos !== undefined) {
+      // Position mode: work in 0-1 space, let the processor handle scaling
+      const sensitivity = 1 / 150;
+      let newPosition = this.startPosition + (deltaY * sensitivity);
+      newPosition = Math.max(0, Math.min(1, newPosition));
+      if (newPosition !== pos) {
+        this.positionChange.emit(newPosition);
+      }
+    } else {
+      // Value mode: existing behaviour
+      const range = this.max() - this.min();
+      const sensitivity = range / 150;
+      let newValue = this.startValue + (deltaY * sensitivity);
+      const stepVal = this.step();
+      newValue = Math.round(newValue / stepVal) * stepVal;
+      newValue = Math.max(this.min(), Math.min(this.max(), newValue));
+      if (newValue !== this.value()) {
+        this.valueChange.emit(newValue);
+      }
     }
   }
 
