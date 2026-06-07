@@ -5,9 +5,6 @@ Angular 21 and the [`@q-sys/qrwc`](https://www.npmjs.com/package/@q-sys/qrwc) We
 it presents a familiar physical-style mixer surface — faders, channel processing strip, aux sends,
 cue bus — wired live to named components inside a Q-SYS design.
 
-The UI is responsive and resolution-independent: a container query rescales the entire surface
-to fit any 16:9 display, from a tablet to a touchscreen mounted in an equipment rack.
-
 ## What's in the box
 
 The default profile is a **16-channel surface** with:
@@ -17,11 +14,6 @@ The default profile is a **16-channel surface** with:
 - Stereo master output with VU and mute
 - 4 aux sends per channel with aux-master section
 - Solo / cue bus
-
-A second profile for the **Q-SYS Core 510i** is shipped alongside
-(`designer/q-mix-surface 510i.qsys`). New surface variants — different channel counts, EQ band
-layouts, or Q-SYS component naming schemes — are added by declaring another `MixerProfile` and
-providing it through the `MIXER_PROFILE` injection token (see `src/app/mixer/mixer-profile.ts`).
 
 ## Architecture
 
