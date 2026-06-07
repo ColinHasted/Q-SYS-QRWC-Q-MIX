@@ -59,7 +59,6 @@ to work:
 | File | Surface variant |
 | --- | --- |
 | `q-mix-surface.qsys` | Default 16-channel build |
-| `q-mix-surface 510i.qsys` | Q-SYS Core 510i layout |
 
 Component names inside the design (`Mixer`, `Gate_1`…`Gate_16`, `Mic_Line_Input_1`…, etc.) must
 match the templates in the active `MixerProfile`. Rename either side and the binding silently

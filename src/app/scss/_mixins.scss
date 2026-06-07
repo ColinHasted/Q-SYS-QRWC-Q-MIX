@@ -12,7 +12,7 @@
     position: absolute;
     inset: 0;
     background: $brushed-metal;
-    background-size: 0.25em 100%;
+    background-size: 0.25rem 100%;
     opacity: 0.5;
     pointer-events: none;
   }
@@ -20,19 +20,19 @@
 
 @mixin panel-inset {
   box-shadow:
-    inset 0.125em 0.125em 0.5em rgba(0, 0, 0, 0.6),
-    inset -0.0625em -0.0625em 0.25em rgba(255, 255, 255, 0.1),
-    0 0.0625em 0 rgba(255, 255, 255, 0.1);
-  border: 0.0625em solid rgba(0, 0, 0, 0.5);
-  border-radius: 0.25em;
+    inset 0.125rem 0.125rem 0.5rem rgba(0, 0, 0, 0.6),
+    inset -0.0625rem -0.0625rem 0.25rem rgba(255, 255, 255, 0.1),
+    0 0.0625rem 0 rgba(255, 255, 255, 0.1);
+  border: 0.0625rem solid rgba(0, 0, 0, 0.5);
+  border-radius: 0.25rem;
 }
 
 @mixin glowing-text($color) {
   color: $color;
-  text-shadow: 0 0 0.5em $color, 0 0 1em rgba($color, 0.5);
+  text-shadow: 0 0 0.5rem $color, 0 0 1rem rgba($color, 0.5);
 }
 
 @mixin led-glow($color) {
   background: radial-gradient(circle, color.scale($color, $lightness: 40%) 0%, $color 50%, color.scale($color, $lightness: -30%) 100%);
-  box-shadow: 0 0 0.5em $color, 0 0 1em rgba($color, 0.6), inset 0 0 0.25em rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0.5rem $color, 0 0 1rem rgba($color, 0.6), inset 0 0 0.25rem rgba(255, 255, 255, 0.3);
 }

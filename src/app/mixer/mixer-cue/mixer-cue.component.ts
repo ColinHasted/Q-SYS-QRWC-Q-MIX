@@ -2,6 +2,7 @@ import { Component, computed, inject, input } from '@angular/core';
 import { GaugeKnobComponent } from '../shared/gauge-knob/gauge-knob.component';
 import { QrwcMixerComponent } from '../../../qrwc/components/qrwc-mixer-component';
 import { MIXER_PROFILE } from '../mixer-profile';
+import { ChannelProcessingService } from '../services/channel-processing.service';
 
 @Component({
   selector: 'app-mixer-cue',
@@ -12,7 +13,9 @@ import { MIXER_PROFILE } from '../mixer-profile';
 })
 export class MixerCueComponent {
   private readonly profile = inject(MIXER_PROFILE);
+  private readonly channelProcessing = inject(ChannelProcessingService);
   private readonly cueBus = this.profile.cueBus;
+  private readonly cueLineOutChannels = this.profile.cueLineOutChannels;
 
   mixer = input.required<QrwcMixerComponent>();
 
@@ -20,11 +23,11 @@ export class MixerCueComponent {
   on = computed(() => !this.mixer().getCueMute(this.cueBus)());
   gain = computed(() => this.mixer().getCueGain(this.cueBus)());
 
-  // VU meters: TODO — wire to QrwcMeterComponent when available
-  vuLevelL = computed(() => 0);
-  vuLevelR = computed(() => 0);
-  clipL = computed(() => false);
-  clipR = computed(() => false);
+  // VU meters wired to Line_Out_Core channels 7 (L) and 8 (R)
+  vuLevelL = computed(() => this.channelProcessing.lineOut.getDigitalOutputLevel(this.cueLineOutChannels[0])());
+  vuLevelR = computed(() => this.channelProcessing.lineOut.getDigitalOutputLevel(this.cueLineOutChannels[1])());
+  clipL    = computed(() => this.channelProcessing.lineOut.getClip(this.cueLineOutChannels[0])());
+  clipR    = computed(() => this.channelProcessing.lineOut.getClip(this.cueLineOutChannels[1])());
 
   onToggle(): void {
     this.mixer().SetCueMute(this.cueBus, this.on()); // on()=true → set muted

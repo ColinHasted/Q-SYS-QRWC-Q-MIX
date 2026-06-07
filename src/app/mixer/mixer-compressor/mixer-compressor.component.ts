@@ -15,18 +15,15 @@ export class MixerCompressorComponent implements AfterViewInit {
 
   private readonly channelProcessing = inject(ChannelProcessingService);
 
-  // Input: which channel this compressor UI is controlling (null = no selection).
   channel = input<number | null>(null);
 
   protected disabled = computed(() => this.channel() == null);
 
-  // Computed: get the QRWC compressor component for the current channel (or null).
   private qrwcCompressor = computed<QrwcCompressorComponent | null>(() => {
     const ch = this.channel();
     return ch == null ? null : this.channelProcessing.getCompressor(ch);
   });
 
-  // Expose QRWC signals for template binding with safe defaults.
   bypass       = computed(() => this.qrwcCompressor()?.bypass() ?? true);
   thresholdPos = computed(() => this.qrwcCompressor()?.thresholdLevelPosition() ?? 0);
   thresholdStr = computed(() => this.qrwcCompressor()?.thresholdLevelString() ?? '');
@@ -44,7 +41,6 @@ export class MixerCompressorComponent implements AfterViewInit {
   makeupStr    = computed(() => this.qrwcCompressor()?.outputGainString() ?? '');
   appliedGain  = computed(() => this.qrwcCompressor()?.appliedGain() ?? 0);
 
-  // Keep value signals for the curve canvas
   threshold    = computed(() => this.qrwcCompressor()?.thresholdLevel() ?? -20);
   ratio        = computed(() => this.qrwcCompressor()?.ratio() ?? 1);
 
@@ -99,7 +95,6 @@ export class MixerCompressorComponent implements AfterViewInit {
       ctx.stroke();
     }
 
-    // Draw unity line (diagonal)
     ctx.strokeStyle = 'rgba(0, 200, 255, 0.2)';
     ctx.beginPath();
     ctx.moveTo(0, height);
@@ -119,11 +114,9 @@ export class MixerCompressorComponent implements AfterViewInit {
     const threshX = thresholdNorm * width;
     const threshY = height - (thresholdNorm * height);
 
-    // Below threshold - unity (1:1)
     ctx.moveTo(0, height);
     ctx.lineTo(threshX, threshY);
 
-    // Above threshold - compressed
     const endX = width;
     const remainingInput = 1 - thresholdNorm;
     const compressedOutput = remainingInput / ratio;

@@ -2,25 +2,25 @@
   <div class="channel master">
     <div class="channel-label master-label">MASTER</div>
 
-    <!-- VU Meters (stereo) — TODO: wire to QrwcMeterComponent -->
+    <!-- VU Meters (stereo) -->
     <div class="vu-meter-stereo">
       <div class="vu-meter master-vu stereo-channel">
-        @for (seg of getVUSegments(vuLevelL); track $index) {
+        @for (seg of getVUSegments(vuLevelL()); track $index) {
           <div class="vu-segment"
                [class.active]="seg"
                [class.yellow]="$index >= 8 && $index < 10"
                [class.red]="$index >= 10"></div>
         }
-        <div class="clip-led" [class.active]="clipL">L</div>
+        <div class="clip-led" [class.active]="clipL()">L</div>
       </div>
       <div class="vu-meter master-vu stereo-channel">
-        @for (seg of getVUSegments(vuLevelR); track $index) {
+        @for (seg of getVUSegments(vuLevelR()); track $index) {
           <div class="vu-segment"
                [class.active]="seg"
                [class.yellow]="$index >= 8 && $index < 10"
                [class.red]="$index >= 10"></div>
         }
-        <div class="clip-led" [class.active]="clipR">R</div>
+        <div class="clip-led" [class.active]="clipR()">R</div>
       </div>
     </div>
 
@@ -39,8 +39,6 @@
     />
   </div>
 
-  <!-- QMIX logo lives inside the master section so the left border runs full
-       height and the logo fills the space below the fader. -->
   <div class="master-branding">
     <img src="q-sys-emblem-white.svg" alt="Q" class="master-branding__emblem" />
     <div class="master-branding__mix">MIX</div>

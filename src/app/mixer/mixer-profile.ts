@@ -63,6 +63,15 @@ export interface MixerProfile {
   /** Cue bus index. */
   readonly cueBus: number;
 
+  /** Q-SYS Line Output block component name used for output VU metering. */
+  readonly lineOutComponentName: string;
+  /** Line-out channel numbers (1-based) parallel to auxOutputs, used for aux VU meters. */
+  readonly auxLineOutChannels: readonly number[];
+  /** Line-out channel numbers [L, R] (1-based) for the main stereo output VU meters. */
+  readonly mainLineOutChannels: readonly [number, number];
+  /** Line-out channel numbers [L, R] (1-based) for the cue bus VU meters. */
+  readonly cueLineOutChannels: readonly [number, number];
+
   /** Number of EQ bands per channel (must match Q-SYS design). */
   readonly eqBandCount: number;
   /** Frequency range/step metadata per EQ band — length must equal eqBandCount. */
@@ -98,6 +107,11 @@ export const DEFAULT_MIXER_PROFILE: MixerProfile = {
   mainOutput: 5,
   auxOutputs: [1, 2, 3, 4],
   cueBus: 1,
+
+  lineOutComponentName: 'Line_Out_Core',
+  auxLineOutChannels: [1, 2, 3, 4],
+  mainLineOutChannels: [5, 6],
+  cueLineOutChannels: [7, 8],
 
   eqBandCount: 7,
   eqBandRanges: [

@@ -44,8 +44,15 @@ export class FaderComponent {
 
   private updateFromPointer(event: PointerEvent): void {
     const rect = this.wrapperRef.nativeElement.getBoundingClientRect();
-    // top = max, bottom = min
-    const pct = 1 - Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height));
+    // The cap centre travels within an inset of 1.05 rem from each edge:
+    //   0.5 rem rail inset  +  half of $cap-height (1.1 rem / 2 = 0.55 rem)
+    // Map the pointer to that inner range so the full 0→1 span is reachable.
+    const rootEm = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const insetPx = 1.05 * rootEm;
+    const travelPx = rect.height - 2 * insetPx;
+    const pct = travelPx > 0
+      ? 1 - Math.max(0, Math.min(1, (event.clientY - rect.top - insetPx) / travelPx))
+      : 0;
     const min = this.min();
     const max = this.max();
     let value = min + pct * (max - min);

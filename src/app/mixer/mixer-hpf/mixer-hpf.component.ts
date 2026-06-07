@@ -12,7 +12,7 @@ import { GaugeKnobComponent } from '../shared/gauge-knob/gauge-knob.component';
 export class MixerHpfComponent {
   private readonly channelProcessing = inject(ChannelProcessingService);
 
-  channel = input<number | null>(null);
+  channel = input.required<number | null>();
 
   protected disabled = computed(() => this.channel() == null);
 

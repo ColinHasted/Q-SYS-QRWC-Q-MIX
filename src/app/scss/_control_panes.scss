@@ -18,10 +18,7 @@
   position: relative;
   transition: filter 0.15s ease, opacity 0.15s ease;
 
-  // Disabled state — applied when no channel is selected. Panel colour and
-  // controls remain visible (so the operator sees the layout) but knob
-  // feedback is suppressed: the lit gauge ring fades out and the value box
-  // reads blank. Controls also stop responding to input.
+
   &.is-disabled {
     // Block knob/footer interaction while the channel is unselected. We
     // deliberately leave the band selector + filter chooser pointer-active
@@ -154,7 +151,8 @@
 
     .panel-toggle {
       margin-top: 0;
-      min-width: 5rem;
+      padding: 0.2rem 0.6rem;
+      min-width: 2.5rem;
     }
   }
 }

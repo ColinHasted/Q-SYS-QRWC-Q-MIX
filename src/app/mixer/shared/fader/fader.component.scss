@@ -5,11 +5,7 @@
   display: contents;
 }
 
-// =============================================================================
-// Fader Block (BEM: fader)
-// =============================================================================
 
-// Track container - uses legacy class name from HTML
 .fader-track {
   display: flex;
   flex-direction: row;
@@ -129,11 +125,7 @@
   white-space: nowrap;
 }
 
-// Visible cap. Positioned bottom-up using --fader-pct (0..1) set on
-// .fader-wrapper. The cap deliberately overhangs the track on both sides so
-// it reads like a real motorised fader cap sitting on top of the rails.
-// Travel and size are expressed in % of the wrapper so the cap scales with
-// whatever vertical space the channel strip allocates.
+
 $cap-width: 2.4rem; // total horizontal width — fits inside channel slot
 $cap-height: 1.1rem; // thickness along the travel axis
 

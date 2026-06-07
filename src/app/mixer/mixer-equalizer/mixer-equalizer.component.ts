@@ -52,8 +52,6 @@ export class MixerEqualizerComponent {
     { type: FilterType.HighShelf,  icon: 'icons/filters/high-shelf.svg', label: 'High Shelf' },
   ];
 
-  // Selected band index — resets to 0 whenever the channel changes so we never
-  // dereference a band that doesn't exist after a quick channel swap.
   selectedBand = linkedSignal<number | null, number>({
     source: () => this.channel(),
     computation: () => 0,

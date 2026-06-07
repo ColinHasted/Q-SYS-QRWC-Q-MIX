@@ -24,18 +24,13 @@ export class MixerChannelComponent {
 
   select = output<void>();
 
-  // QRWC signals — reactive to channelId changes
   label = computed(() => this.mixer().getInputLabel(this.channelId())());
   gain = computed(() => this.mixer().getInputGain(this.channelId())());
-  // Q-SYS pan: -1.0 (full left) to 1.0 (full right)
   pan = computed(() => this.mixer().getInputPan(this.channelId())());
-  // 'on' = not muted
   on = computed(() => !this.mixer().getInputMute(this.channelId())());
   solo = computed(() => this.mixer().getInputSolo(this.channelId())());
-  // Cue enable for the configured cue bus
   cueEnable = computed(() => this.mixer().getInputCueEnable(this.channelId(), this.cueBus)());
 
-  // VU / clip — sourced from the same Mic/Line Input block as the IN panel
   private micCh = computed(() => this.channelProcessing.getMicInput(this.channelId()));
   vuLevel = computed(() => this.micCh().block.getDigitalInputLevel(this.micCh().localCh)());
   clip    = computed(() => this.micCh().block.getClip(this.micCh().localCh)());
@@ -45,8 +40,6 @@ export class MixerChannelComponent {
   }
 
   protected getVUSegments(): boolean[] {
-    // Range: -60 to +10 dBFS across 12 segments (~5.8 dB each).
-    // Seg 8-9 = yellow (~-13 to -7 dBFS), seg 10-11 = red (~+4 to +10 dBFS).
     const level = this.vuLevel();
     return Array.from({ length: 12 }, (_, i) => level >= -60 + (i + 1) * (70 / 12));
   }
@@ -65,7 +58,6 @@ export class MixerChannelComponent {
     this.mixer().SetInputPan(this.channelId(), value);
   }
 
-  // on()=true means currently active — toggle sets mute = on()
   protected onOnToggle(): void {
     this.mixer().SetInputMute(this.channelId(), this.on());
   }

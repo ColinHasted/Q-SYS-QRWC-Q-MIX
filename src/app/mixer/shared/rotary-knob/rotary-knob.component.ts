@@ -29,9 +29,9 @@ export class RotaryKnobComponent implements AfterViewInit, OnDestroy {
 
   get sizeEm(): string {
     switch (this.size()) {
-      case 'small': return '2.25em';
-      case 'large': return '3.375em';
-      default: return '2.75em';
+      case 'small': return '2.25rem';
+      case 'large': return '3.375rem';
+      default: return '2.75rem';
     }
   }
 

@@ -13,10 +13,10 @@
   flex: 1;
   display: flex;
   flex-direction: row;
-  gap: 0.5em;
-  padding: 0.25em;
+  gap: 0.5rem;
+  padding: 0.25rem;
   min-height: 0;
-  overflow: hidden;
+
   align-items: stretch;
 
   // (legacy) top-section now unused — kept as a flex passthrough in case any
@@ -46,17 +46,17 @@
       rgba(0, 8, 18, 0.99) 100%
     );
     position: relative;
-    border-radius: 0.5em;
+    border-radius: 0.5rem;
     border: 1px solid rgba(0, 0, 0, 0.85);
     border-top-color: rgba(0, 0, 0, 0.95);
     border-bottom-color: rgba(255, 255, 255, 0.06);
     box-shadow:
-      0 0.25em 0.75em rgba(0, 0, 0, 0.6),
-      inset 0 0.125em 0.5em rgba(0, 0, 0, 0.95),
-      inset 0 0 1.5em rgba(0, 0, 0, 0.4),
-      0 0 0.75em rgba(0, 120, 180, 0.08);
+      0 0.25rem 0.75rem rgba(0, 0, 0, 0.6),
+      inset 0 0.125rem 0.5rem rgba(0, 0, 0, 0.95),
+      inset 0 0 1.5rem rgba(0, 0, 0, 0.4),
+      0 0 0.75rem rgba(0, 120, 180, 0.08);
     overflow: hidden;
-    padding: 0.3em 0.4em;
+    padding: 0.3rem 0.4rem;
 
     // Glass sheen highlight across top
     &::after {
@@ -70,7 +70,7 @@
         transparent 70%
       );
       pointer-events: none;
-      border-radius: 0.5em;
+      border-radius: 0.5rem;
       z-index: 10;
     }
 
@@ -100,15 +100,15 @@
   // Frequency labels
   &__freq-labels {
     position: absolute;
-    bottom: 0.125em;
-    left: 0.5em;
-    right: 0.5em;
+    bottom: 0.125rem;
+    left: 0.5rem;
+    right: 0.5rem;
     display: flex;
     justify-content: space-between;
     pointer-events: none;
 
     span {
-      font-size: 0.3125em;
+      font-size: 0.3125rem;
       color: rgba(0, 200, 255, 0.5);
       font-family: 'Consolas', monospace;
     }
@@ -118,34 +118,34 @@
   &__band-selectors {
     display: flex;
     flex-direction: column;
-    gap: 0.25em;
+    gap: 0.25rem;
     justify-content: center;
     align-items: center;
-    flex: 0 0 5.5em;
-    width: 5.5em;
+    flex: 0 0 5.5rem;
+    width: 5.5rem;
   }
 
   &__band-label {
-    font-size: 0.45em;
+    font-size: 0.45rem;
     font-weight: 600;
     color: rgba(200, 200, 200, 0.9);
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.1rem;
     text-align: center;
-    margin-bottom: 0.25em;
+    margin-bottom: 0.25rem;
   }
 
   &__band-btn {
     width: 100%;
-    height: 2.25em;
-    border-radius: 0.25em;
-    border: 0.0625em solid rgba(0, 0, 0, 0.5);
+    height: 2.25rem;
+    border-radius: 0.25rem;
+    border: 0.0625rem solid rgba(0, 0, 0, 0.5);
     background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 50%, #1a1a1a 100%);
     color: #888;
-    font-size: 0.75em;
+    font-size: 0.75rem;
     font-weight: bold;
     cursor: pointer;
-    box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.4), inset 0 0.0625em 0 rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.4), inset 0 0.0625rem 0 rgba(255, 255, 255, 0.1);
     transition: all 0.15s;
 
     &:hover {
@@ -155,12 +155,12 @@
     // Different colored glow for each band
     &--active {
       font-weight: bold;
-      box-shadow: 0 0 0.75em currentColor;
+      box-shadow: 0 0 0.75rem currentColor;
       
       &[data-band=\"0\"] {
         // Band 1 - Red
         color: #ff6666;
-        text-shadow: 0 0 0.5em rgba(#ff6666, 0.8);
+        text-shadow: 0 0 0.5rem rgba(#ff6666, 0.8);
         background: linear-gradient(180deg, color.adjust(#ff6666, $lightness: -35%) 0%, color.adjust(#ff6666, $lightness: -45%) 50%, color.adjust(#ff6666, $lightness: -50%) 100%);
         border-color: #ff6666;
       }
@@ -168,7 +168,7 @@
       &[data-band=\"1\"] {
         // Band 2 - Orange
         color: $glow-orange;
-        text-shadow: 0 0 0.5em rgba($glow-orange, 0.8);
+        text-shadow: 0 0 0.5rem rgba($glow-orange, 0.8);
         background: linear-gradient(180deg, color.adjust($glow-orange, $lightness: -35%) 0%, color.adjust($glow-orange, $lightness: -45%) 50%, color.adjust($glow-orange, $lightness: -50%) 100%);
         border-color: $glow-orange;
       }
@@ -176,7 +176,7 @@
       &[data-band=\"2\"] {
         // Band 3 - Yellow
         color: $glow-yellow;
-        text-shadow: 0 0 0.5em rgba($glow-yellow, 0.8);
+        text-shadow: 0 0 0.5rem rgba($glow-yellow, 0.8);
         background: linear-gradient(180deg, color.adjust($glow-yellow, $lightness: -35%) 0%, color.adjust($glow-yellow, $lightness: -45%) 50%, color.adjust($glow-yellow, $lightness: -50%) 100%);
         border-color: $glow-yellow;
       }
@@ -184,7 +184,7 @@
       &[data-band=\"3\"] {
         // Band 4 - Green
         color: $glow-green;
-        text-shadow: 0 0 0.5em rgba($glow-green, 0.8);
+        text-shadow: 0 0 0.5rem rgba($glow-green, 0.8);
         background: linear-gradient(180deg, color.adjust($glow-green, $lightness: -35%) 0%, color.adjust($glow-green, $lightness: -45%) 50%, color.adjust($glow-green, $lightness: -50%) 100%);
         border-color: $glow-green;
       }
@@ -192,7 +192,7 @@
       &[data-band=\"4\"] {
         // Band 5 - Cyan
         color: $glow-cyan;
-        text-shadow: 0 0 0.5em rgba($glow-cyan, 0.8);
+        text-shadow: 0 0 0.5rem rgba($glow-cyan, 0.8);
         background: linear-gradient(180deg, color.adjust($glow-cyan, $lightness: -35%) 0%, color.adjust($glow-cyan, $lightness: -45%) 50%, color.adjust($glow-cyan, $lightness: -50%) 100%);
         border-color: $glow-cyan;
       }
@@ -200,7 +200,7 @@
       &[data-band=\"5\"] {
         // Band 6 - Purple
         color: #bb66ff;
-        text-shadow: 0 0 0.5em rgba(#bb66ff, 0.8);
+        text-shadow: 0 0 0.5rem rgba(#bb66ff, 0.8);
         background: linear-gradient(180deg, color.adjust(#bb66ff, $lightness: -35%) 0%, color.adjust(#bb66ff, $lightness: -45%) 50%, color.adjust(#bb66ff, $lightness: -50%) 100%);
         border-color: #bb66ff;
       }
@@ -212,8 +212,9 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    flex: 0 0 5.5em;
-    width: 5.5em;
+    flex: 0 0 5.5rem;
+    width: 5.5rem;
+    height: 108%;
     align-self: stretch;
     align-items: center;
   }
@@ -226,7 +227,7 @@
     align-items: center;
     flex: 1 1 auto;
     min-height: 0;
-    padding: 0.25em 0;
+    padding: 0.25rem 0;
   }
 
   // Filter type selector — compact vertical stack below the knobs.
@@ -257,14 +258,14 @@
 
   &__filter-btn {
     width: 100%;
-    height: 1.5em;
-    padding: 0.2em;
+    height: 1.5rem;
+    padding: 0.2rem;
     border: 1px solid rgba(0, 0, 0, 0.5);
     background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 50%, #1a1a1a 100%);
     color: #888;
     cursor: pointer;
     transition: all 0.15s;
-    box-shadow: 0 0.0625em 0.125em rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -273,8 +274,8 @@
     position: relative;
 
     img {
-      width: 1em;
-      height: 1em;
+      width: 1rem;
+      height: 1rem;
       opacity: 0.5;
       filter: brightness(0) saturate(100%) invert(58%) sepia(0%) saturate(0%) hue-rotate(180deg);
       transition: all 0.15s;
@@ -282,7 +283,7 @@
 
     // Vertical stacking: top/middle/bottom borders
     &--first {
-      border-radius: 0.125em 0.125em 0 0;
+      border-radius: 0.125rem 0.125rem 0 0;
       border-bottom: none;
     }
 
@@ -291,7 +292,7 @@
     }
 
     &--last {
-      border-radius: 0 0 0.125em 0.125em;
+      border-radius: 0 0 0.125rem 0.125rem;
     }
 
     &:hover {
@@ -307,7 +308,7 @@
       background: linear-gradient(180deg, #1a4a2a 0%, #0a3a1a 50%, #002a0a 100%);
       border-color: #00ff88;
       color: #00ff88;
-      box-shadow: 0 0 0.5em rgba(0, 255, 136, 0.5);
+      box-shadow: 0 0 0.5rem rgba(0, 255, 136, 0.5);
       z-index: 1;
 
       img {
@@ -321,15 +322,15 @@
   &__band-bypass-btn {
     width: 100%;
     height: 2rem;
-    margin-top: 0.25em;
+    margin-top: 0.25rem;
     padding: 0;
     border: 1px solid rgba(0, 0, 0, 0.5);
-    border-radius: 0.125em;
+    border-radius: 0.125rem;
     background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 50%, #1a1a1a 100%);
     color: #888;
-    font-size: 0.5em;
+    font-size: 0.5rem;
     font-weight: 600;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.05rem;
     cursor: pointer;
     transition: all 0.15s;
 
@@ -342,7 +343,7 @@
       background: linear-gradient(180deg, #4a1a1a 0%, #3a0a0a 50%, #2a0000 100%);
       border-color: #ff4444;
       color: #ff4444;
-      box-shadow: 0 0 0.5em rgba(255, 68, 68, 0.4);
+      box-shadow: 0 0 0.5rem rgba(255, 68, 68, 0.4);
     }
 
     &:disabled {

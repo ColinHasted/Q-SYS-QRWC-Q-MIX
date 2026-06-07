@@ -13,19 +13,13 @@ import { MIXER_PROFILE } from '../mixer-profile';
 export class MixerAuxSendsComponent {
   private readonly profile = inject(MIXER_PROFILE);
 
-  // Inputs: current channel (null when nothing selected) and mixer QRWC component.
-  channel = input<number | null>(null);
+  channel = input.required<number | null>();
   mixer = input.required<QrwcMixerComponent>();
 
   protected disabled = computed(() => this.channel() == null);
 
-  /** Aux send bus indices from the active mixer profile. */
   readonly auxIndices = this.profile.auxOutputs;
 
-  /**
-   * Reactive array of aux send levels (one per profile.auxOutputs entry).
-   * Returns -∞-ish defaults when no channel is selected.
-   */
   protected auxSends = computed(() => {
     const ch = this.channel();
     const mx = this.mixer();

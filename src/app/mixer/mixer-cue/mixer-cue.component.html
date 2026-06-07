@@ -2,7 +2,6 @@
   <div class="control-pane__header">CUE</div>
   <div class="control-pane__content">
     <div class="cue-main">
-      <!-- Stereo VU Meters -->
       <div class="cue-vu-stereo">
         <div class="cue-vu">
           @for (seg of getVUSegments(vuLevelL()); track $index) {
@@ -24,7 +23,6 @@
         </div>
       </div>  
 
-      <!-- Gain Knob -->
       <div class="cue-controls">
         <app-gauge-knob
           [value]="gain()"

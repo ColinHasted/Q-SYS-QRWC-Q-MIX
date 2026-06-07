@@ -5,6 +5,7 @@ import { QrwcParametricEqualizerComponent } from '../../../qrwc/components/qrwc-
 import { QrwcDelayComponent } from '../../../qrwc/components/qrwc-delay-component';
 import { QrwcHighPassFilterComponent } from '../../../qrwc/components/qrwc-high-pass-filter-component';
 import { QrwcMicLineInputComponent } from '../../../qrwc/components/qrwc-mic-line-input-component';
+import { QrwcLineOutputComponent } from '../../../qrwc/components/qrwc-line-output-component';
 import { MIXER_PROFILE, MixerProfile, formatComponentName } from '../mixer-profile';
 
 /**
@@ -27,6 +28,8 @@ export class ChannelProcessingService {
   private _highPassFilters: QrwcHighPassFilterComponent[] = [];
   // Mic/Line Input blocks (index 0 → block 1).
   private _micInputs: QrwcMicLineInputComponent[] = [];
+  // Line Output block for output VU metering.
+  private _lineOut: QrwcLineOutputComponent | null = null;
 
   private _initialized = false;
 
@@ -46,6 +49,8 @@ export class ChannelProcessingService {
     }
 
     const { processorNameTemplates: tpl, micInput, channelCount } = this.profile;
+
+    this._lineOut = new QrwcLineOutputComponent(this.profile.lineOutComponentName, 8);
 
     for (let block = 1; block <= micInput.blockCount; block++) {
       this._micInputs.push(
@@ -119,6 +124,14 @@ export class ChannelProcessingService {
   getAllEQs(): readonly QrwcParametricEqualizerComponent[] { return this._eqs; }
   getAllDelays(): readonly QrwcDelayComponent[] { return this._delays; }
   getAllHighPassFilters(): readonly QrwcHighPassFilterComponent[] { return this._highPassFilters; }
+
+  /** The Line Output block used for output VU metering. */
+  get lineOut(): QrwcLineOutputComponent {
+    if (!this._lineOut) {
+      throw new Error('ChannelProcessingService not initialized. Call initialize() first.');
+    }
+    return this._lineOut;
+  }
 
   isInitialized(): boolean {
     return this._initialized;
