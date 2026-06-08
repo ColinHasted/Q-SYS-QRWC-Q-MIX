@@ -5,6 +5,8 @@ Angular 21 and the [`@q-sys/qrwc`](https://www.npmjs.com/package/@q-sys/qrwc) We
 it presents a familiar physical-style mixer surface — faders, channel processing strip, aux sends,
 cue bus — wired live to named components inside a Q-SYS design.
 
+<img width="720" height="404" alt="Q-Mix-Surface" src="https://github.com/user-attachments/assets/80cfc737-7752-497d-9b16-b5fef842a197" />
+
 ## What's in the box
 
 The default profile is a **16-channel surface** with:
